@@ -25,7 +25,6 @@ class Base(DeclarativeBase):
 
 class Booking(Base):
     __tablename__ = "bookings"
-
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     full_name: Mapped[str] = mapped_column(String(200))
     department: Mapped[str] = mapped_column(String(200), default="")
@@ -38,7 +37,6 @@ class Booking(Base):
     created_at: Mapped[str] = mapped_column(String(40), default=lambda: datetime.now().isoformat(timespec="seconds"))
 
 Base.metadata.create_all(engine)
-
 app = FastAPI(title="Confotec NR500 Booking")
 
 class BookingIn(BaseModel):
