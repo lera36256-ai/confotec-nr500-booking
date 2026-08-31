@@ -205,6 +205,27 @@ body.records-view .hero-grid{display:none}
   .mobile-nav button:nth-child(2){font-size:9.5px}
 }
 
+
+@media(max-width:760px){
+  .mobile-nav{
+    z-index:99999!important;
+    pointer-events:auto!important;
+    isolation:isolate;
+  }
+  .mobile-nav button{
+    position:relative;
+    z-index:100000;
+    pointer-events:auto!important;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    cursor:pointer;
+  }
+  .mobile-nav button *{
+    pointer-events:none;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -459,28 +480,28 @@ async function renderAllBookings(){
   }
 }
 
-function showCalendarView(){
+window.showCalendarView=function showCalendarView(){
   document.body.classList.remove('records-view');
   document.getElementById('allBookingsSection').style.display='none';
   setActiveSection('calendar');
   window.scrollTo({top:0,behavior:'smooth'});
-}
+};
 
-async function showRecordsView(){
+window.showRecordsView=async function showRecordsView(){
   document.body.classList.add('records-view');
   document.getElementById('allBookingsSection').style.display='block';
   setActiveSection('records');
   await renderAllBookings();
   document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'});
-}
+};
 
-function openDialog(d){
+window.openDialog=function openDialog(d){
   document.getElementById('err').style.display='none';
   document.getElementById('booking_date').value=d||new Date().toISOString().slice(0,10);
   dlg.showModal();
-}
+};
 
-async function toggleAdmin(){
+window.toggleAdmin=async function toggleAdmin(){
   if(adminPassword){
     adminPassword='';
     sessionStorage.removeItem('adminPassword');
@@ -499,7 +520,7 @@ async function toggleAdmin(){
     if(adminPassword) mobileAdmin.classList.add('active');
     else mobileAdmin.classList.remove('active');
   }
-}
+};
 
 window.deleteBooking=async function(id){
   if(!adminPassword)return;
@@ -577,16 +598,6 @@ document.getElementById('allBookingsBtn').addEventListener('click',showRecordsVi
 document.getElementById('x').addEventListener('click',()=>dlg.close());
 document.getElementById('cancel').addEventListener('click',()=>dlg.close());
 
-const mobileNew=document.getElementById('mobileNew');
-const mobileAdmin=document.getElementById('mobileAdmin');
-const mobileAll=document.getElementById('mobileAll');
-const mobileCalendar=document.getElementById('mobileCalendar');
-
-if(mobileNew)mobileNew.addEventListener('click',()=>openDialog());
-if(mobileAdmin)mobileAdmin.addEventListener('click',toggleAdmin);
-if(mobileAll)mobileAll.addEventListener('click',showRecordsView);
-if(mobileCalendar)mobileCalendar.addEventListener('click',showCalendarView);
-
 setAdminUi();
 setActiveSection('calendar');
 const initialMobileAdmin=document.getElementById('mobileAdmin');
@@ -597,11 +608,11 @@ loadMonthBookings().catch(err=>{
 
 </script>
 
-<nav class="mobile-nav">
-  <button id="mobileCalendar" class="active"><span class="ico">▣</span>Календарь</button>
-  <button id="mobileNew"><span class="ico">＋</span>Новая запись</button>
-  <button id="mobileAll"><span class="ico">◫</span>Все записи</button>
-  <button id="mobileAdmin"><span class="ico">◇</span>Админ</button>
+<nav class="mobile-nav" id="mobileNav">
+  <button type="button" id="mobileCalendar" class="active" onclick="showCalendarView()"><span class="ico">▣</span>Календарь</button>
+  <button type="button" id="mobileNew" onclick="openDialog()"><span class="ico">＋</span>Новая запись</button>
+  <button type="button" id="mobileAll" onclick="showRecordsView()"><span class="ico">◫</span>Все записи</button>
+  <button type="button" id="mobileAdmin" onclick="toggleAdmin()"><span class="ico">◇</span>Админ</button>
 </nav>
 <div id="successToast" class="success-toast" role="status" aria-live="polite"></div>
 
