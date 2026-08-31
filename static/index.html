@@ -79,500 +79,118 @@ dialog{border:0;border-radius:18px;padding:0;width:min(560px,94vw);box-shadow:0 
 @media(max-width:1100px){.shell{grid-template-columns:1fr}.sidebar{display:none}.hero-grid{grid-template-columns:1fr}.raman{font-size:86px}.hero{min-height:420px}}
 @media(max-width:760px){.main{padding:16px}.topbar{align-items:flex-start;gap:10px;flex-direction:column}.weekdays{display:none}.week{grid-template-columns:1fr}.day.muted{display:none}.day{min-height:78px;border-right:0}.hero{padding:22px}.raman{font-size:66px;letter-spacing:-4px}.orb,.orbit{opacity:.5}table{display:block;overflow-x:auto}}
 
-/* compact mode when "Все записи" is opened */
-.hero-grid{
-  transition:grid-template-columns .55s cubic-bezier(.22,1,.36,1), gap .55s cubic-bezier(.22,1,.36,1);
-}
-.hero{
-  transition:min-height .55s cubic-bezier(.22,1,.36,1), padding .55s cubic-bezier(.22,1,.36,1),
-             transform .55s cubic-bezier(.22,1,.36,1), opacity .45s ease;
-}
-.raman,.raman em,.device-name,.device-sub,.kicker,.cta,.orb,.orbit{
-  transition:all .55s cubic-bezier(.22,1,.36,1);
-}
-.calendar-card{
-  transition:transform .55s cubic-bezier(.22,1,.36,1);
-}
-body.all-records-mode .hero-grid{
-  grid-template-columns:1fr;
-  gap:12px;
-}
-body.all-records-mode .hero{
-  min-height:150px;
-  padding:18px 24px;
-  transform:translateY(-6px);
-}
-body.all-records-mode .kicker{
-  opacity:0;
-  height:0;
-  margin:0;
-  overflow:hidden;
-}
-body.all-records-mode .raman{
-  font-size:46px;
-  letter-spacing:-2px;
-  margin:0;
-}
-body.all-records-mode .raman em{
-  display:inline;
-  font-size:16px;
-  margin-left:12px;
-  letter-spacing:.4px;
-}
-body.all-records-mode .device-name{
-  font-size:16px;
-  margin:10px 0 0;
-}
-body.all-records-mode .device-sub,
-body.all-records-mode .cta,
-body.all-records-mode .orb,
-body.all-records-mode .orbit{
-  opacity:0;
-  pointer-events:none;
-  transform:translateY(-12px) scale(.96);
-  height:0;
-  margin:0;
-  overflow:hidden;
-}
-body.all-records-mode .calendar-card{
-  transform:translateY(-4px);
-}
-body.all-records-mode .table-card{
-  scroll-margin-top:18px;
-}
+/* ===== Stable view switching ===== */
+#allBookingsSection{display:none}
+body.records-view #allBookingsSection{display:block}
+body.records-view .hero-grid{display:none}
 
+/* success message */
+.success-toast{
+  position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);
+  z-index:1000;max-width:min(92vw,430px);padding:12px 16px;border-radius:14px;
+  background:rgba(8,21,47,.96);color:#fff;box-shadow:0 18px 50px rgba(8,21,47,.28);
+  font:700 13px Manrope,Arial,sans-serif;text-align:center;opacity:0;pointer-events:none;
+  transition:opacity .25s ease,transform .32s cubic-bezier(.22,1,.36,1);
+}
+.success-toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* ===== Mobile redesign ===== */
-@media (max-width: 760px){
+@media(max-width:760px){
   html,body{
     background:
-      radial-gradient(circle at 92% 0%,rgba(166,139,255,.22),transparent 26%),
-      radial-gradient(circle at 18% 34%,rgba(115,208,255,.15),transparent 28%),
+      radial-gradient(circle at 92% 0%,rgba(166,139,255,.20),transparent 26%),
+      radial-gradient(circle at 18% 34%,rgba(115,208,255,.13),transparent 28%),
       #f7f9fd;
   }
-
   body{overflow-x:hidden}
-  .shell{display:block;min-height:100vh}
-  .main{padding:14px 12px 88px}
+  .shell{display:block}
+  .sidebar{display:none}
+  .main{padding:12px 10px 88px}
 
-  /* mobile top bar */
   .topbar{
-    position:sticky;
-    top:0;
-    z-index:30;
-    margin:-14px -12px 14px;
-    padding:12px 14px;
-    background:rgba(247,249,253,.86);
-    backdrop-filter:blur(16px);
+    position:sticky;top:0;z-index:30;margin:-12px -10px 12px;padding:11px 12px;
+    background:rgba(247,249,253,.88);backdrop-filter:blur(16px);
     border-bottom:1px solid rgba(220,226,239,.9);
-    flex-direction:row;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
+    display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;
   }
+  .titleline{font-size:12px;line-height:1.25;max-width:55%;color:#59647b}
+  .top-actions{display:flex;gap:6px;align-items:center}
+  .top-actions .secondary{display:none}
+  .top-actions .primary{padding:9px 11px;font-size:12px;border-radius:11px}
 
-  .titleline{
-    font-size:12px;
-    line-height:1.25;
-    max-width:56%;
-    color:#59647b;
-  }
-
-  .top-actions{
-    gap:6px;
-    flex-wrap:nowrap;
-  }
-
-  .top-actions .secondary{
-    display:none;
-  }
-
-  .top-actions .primary{
-    padding:9px 11px;
-    font-size:12px;
-    border-radius:11px;
-    box-shadow:0 8px 20px rgba(76,84,234,.18);
-  }
-
-  .admin-badge{
-    font-size:10px;
-    padding:6px 8px;
-  }
-
-  /* hero becomes compact editorial card */
-  .hero-grid{
-    display:block;
-  }
-
+  .hero-grid{display:block}
   .hero{
-    min-height:0;
-    padding:20px 18px 22px;
-    border-radius:22px;
-    margin-bottom:14px;
-    overflow:hidden;
+    min-height:0;padding:20px 18px 22px;border-radius:22px;margin-bottom:12px;
   }
+  .kicker{font-size:10px;letter-spacing:1.5px}
+  .raman{font-size:58px;letter-spacing:-4px;margin:14px 0 0;line-height:.86}
+  .raman em{font-size:17px;margin-top:11px}
+  .device-name{font-size:18px;margin:22px 0 7px}
+  .device-sub{font-size:13px;line-height:1.5;max-width:78%}
+  .cta{margin-top:17px;padding:12px 16px;font-size:13px;border-radius:12px}
+  .orb{width:105px;height:105px;right:10px;bottom:20px;opacity:.80}
+  .orbit{width:150px;height:56px;right:-4px;bottom:45px;opacity:.72}
 
-  .kicker{
-    font-size:10px;
-    letter-spacing:1.6px;
+  .calendar-card{border-radius:20px;padding:10px;margin-bottom:12px}
+  .cal-head{margin-bottom:8px}
+  .monthnav{width:100%;justify-content:space-between;font-size:17px}
+  .cal-head>div:last-child{display:none}
+  .icon{width:34px;height:34px;border-radius:10px}
+
+  .calendar{border-radius:14px}
+  .weekdays{display:grid!important;grid-template-columns:repeat(7,1fr)}
+  .week{display:grid!important;grid-template-columns:repeat(7,1fr)}
+  .weekday{padding:7px 1px;font-size:9px}
+  .day,.day.muted{
+    display:block!important;min-height:72px;padding:4px;border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);background:#fff;
   }
+  .day.muted{background:#fafbfe;color:#c2c8d4}
+  .date{font-size:9px;margin-bottom:3px}
+  .day.today .date{padding:3px 5px}
+  .booking{padding:4px 4px;font-size:8px;line-height:1.15;border-radius:5px;margin-top:3px}
+  .booking b{font-size:8.5px}
 
-  .raman{
-    font-size:58px;
-    letter-spacing:-4px;
-    margin:14px 0 0;
-    line-height:.86;
-  }
-
-  .raman em{
-    font-size:17px;
-    margin-top:12px;
-    letter-spacing:.6px;
-  }
-
-  .device-name{
-    font-size:18px;
-    margin:22px 0 7px;
-    max-width:250px;
-  }
-
-  .device-sub{
-    font-size:13px;
-    line-height:1.55;
-    max-width:78%;
-  }
-
-  .cta{
-    margin-top:18px;
-    width:auto;
-    padding:12px 16px;
-    font-size:13px;
-    border-radius:12px;
-  }
-
-  .orb{
-    width:110px;
-    height:110px;
-    right:10px;
-    bottom:20px;
-    opacity:.82;
-  }
-
-  .orbit{
-    width:155px;
-    height:58px;
-    right:-4px;
-    bottom:45px;
-    opacity:.75;
-  }
-
-  /* calendar optimized for touch */
-  .calendar-card{
-    border-radius:20px;
-    padding:12px;
-    margin-bottom:14px;
-  }
-
-  .cal-head{
-    gap:8px;
-    align-items:center;
-  }
-
-  .monthnav{
-    width:100%;
-    justify-content:space-between;
-    font-size:18px;
-  }
-
-  .icon{
-    width:36px;
-    height:36px;
-    border-radius:11px;
-  }
-
-  .cal-head > div:last-child{
-    display:none;
-  }
-
-  .calendar{
-    border-radius:14px;
-    overflow:hidden;
-  }
-
-  .weekdays{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-  }
-
-  .weekday{
-    padding:8px 2px;
-    font-size:10px;
-  }
-
-  .week{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-  }
-
-  .day,
-  .day.muted{
-    display:block;
-    min-height:76px;
-    padding:5px;
-    border-right:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    background:white;
-    color:inherit;
-  }
-
-  .day.muted{
-    background:#fafbfe;
-    color:#c2c8d4;
-  }
-
-  .date{
-    font-size:10px;
-    margin-bottom:4px;
-  }
-
-  .day.today .date{
-    padding:3px 5px;
-  }
-
-  .booking{
-    padding:4px 5px;
-    font-size:8.5px;
-    border-radius:6px;
-    line-height:1.2;
-    margin-top:4px;
-    overflow:hidden;
-  }
-
-  .booking b{
-    font-size:9px;
-  }
-
-  /* bookings become cards instead of wide table */
-  .table-card{
-    margin-top:14px;
-    border-radius:20px;
-    padding:14px;
-  }
-
-  .table-title{
-    font-size:18px;
-    margin-bottom:12px;
-  }
-
-  table,thead,tbody,tr,th,td{
-    display:block;
-    width:100%;
-  }
-
-  thead{
-    display:none;
-  }
-
-  tbody{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-
-  tr{
-    background:white;
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:12px;
-    box-shadow:0 8px 22px rgba(29,45,91,.05);
-  }
-
-  td{
-    border:0;
-    padding:4px 0;
-    font-size:12px;
-  }
-
-  td:nth-child(1){
-    font-weight:800;
-    font-size:13px;
-  }
-
-  td:nth-child(2){
-    color:#51607a;
-    font-weight:700;
-  }
-
-  td:nth-child(3){
-    font-size:13px;
-    font-weight:800;
-    margin-top:4px;
-  }
-
+  .table-card{margin-top:12px;border-radius:20px;padding:13px}
+  .table-title{font-size:18px;margin-bottom:10px}
+  table,thead,tbody,tr,th,td{display:block;width:100%}
+  thead{display:none}
+  tbody{display:flex;flex-direction:column;gap:9px}
+  tr{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px;box-shadow:0 7px 20px rgba(29,45,91,.05)}
+  td{border:0;padding:3px 0;font-size:12px}
+  td:nth-child(1){font-weight:800;font-size:13px}
+  td:nth-child(2){color:#51607a;font-weight:700}
+  td:nth-child(3){font-size:13px;font-weight:800;margin-top:3px}
   td:nth-child(4)::before{content:"Подразделение · ";color:#929bad;font-weight:600}
   td:nth-child(5)::before{content:"Образцы · ";color:#929bad;font-weight:600}
   td:nth-child(6)::before{content:"Комментарий · ";color:#929bad;font-weight:600}
+  .danger{width:100%;margin-top:5px;padding:9px}
 
-  td:last-child{
-    margin-top:6px;
+  dialog{
+    width:100%;max-width:none;margin:auto 0 0;border-radius:22px 22px 0 0;
+    max-height:88vh;overflow:auto;
   }
+  .modal-head{position:sticky;top:0;z-index:2;background:#fff}
+  .modal-body{padding:16px 16px 24px}
+  .grid2{grid-template-columns:1fr;gap:0}
+  input,textarea{font-size:16px;padding:12px}
 
-  .danger{
-    width:100%;
-    padding:9px 10px;
-  }
-
-  /* mobile bottom navigation */
   .mobile-nav{
-    position:fixed;
-    left:10px;
-    right:10px;
-    bottom:10px;
-    z-index:50;
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:4px;
-    padding:6px;
-    background:rgba(7,20,47,.94);
-    backdrop-filter:blur(16px);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:18px;
+    position:fixed;left:10px;right:10px;bottom:10px;z-index:60;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;
+    background:rgba(7,20,47,.95);backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.1);border-radius:18px;
     box-shadow:0 18px 50px rgba(4,14,36,.32);
   }
-
   .mobile-nav button{
-    border:0;
-    background:transparent;
-    color:#dce5ff;
-    padding:9px 4px 8px;
-    border-radius:13px;
-    font:600 10px Manrope;
-    cursor:pointer;
+    border:0;background:transparent;color:#dce5ff;padding:9px 4px 8px;border-radius:13px;
+    font:600 10px Manrope;cursor:pointer;
   }
+  .mobile-nav button.active{background:linear-gradient(135deg,#4c6fff,#9e5df4);color:#fff}
+  .mobile-nav .ico{display:block;font-size:18px;margin-bottom:3px}
 
-  .mobile-nav button.active{
-    background:linear-gradient(135deg,#4c6fff,#9e5df4);
-    color:white;
-  }
-
-  .mobile-nav .ico{
-    display:block;
-    font-size:18px;
-    margin-bottom:3px;
-  }
-
-  /* modal as bottom sheet */
-  dialog{
-    width:100%;
-    max-width:none;
-    margin:auto 0 0 0;
-    border-radius:22px 22px 0 0;
-    max-height:88vh;
-    overflow:auto;
-  }
-
-  dialog::backdrop{
-    background:rgba(6,13,31,.48);
-  }
-
-  .modal-head{
-    position:sticky;
-    top:0;
-    z-index:2;
-    background:white;
-  }
-
-  .modal-body{
-    padding:16px 16px 24px;
-  }
-
-  .grid2{
-    grid-template-columns:1fr;
-    gap:0;
-  }
-
-  input,textarea{
-    font-size:16px;
-    padding:12px;
-  }
-
-  .modal-actions{
-    position:sticky;
-    bottom:0;
-    background:white;
-    padding-top:10px;
-  }
-
-  .modal-actions .primary{
-    flex:1;
-  }
-
-  /* compact records mode on mobile */
-  body.all-records-mode .hero{
-    min-height:0;
-    padding:14px 16px;
-    margin-bottom:10px;
-  }
-
-  body.all-records-mode .raman{
-    font-size:36px;
-    letter-spacing:-2px;
-  }
-
-  body.all-records-mode .raman em{
-    font-size:13px;
-    margin-left:8px;
-  }
-
-  body.all-records-mode .device-name{
-    font-size:14px;
-    margin-top:8px;
-  }
-
-  body.all-records-mode .calendar-card{
-    transform:none;
-  }
+  .success-toast{bottom:84px;max-width:calc(100vw - 28px);font-size:12px;padding:11px 14px}
 }
-
-@media (min-width:761px){
-  .mobile-nav{display:none}
-}
-
-
-/* success toast */
-.success-toast{
-  position:fixed;
-  left:50%;
-  bottom:28px;
-  transform:translate(-50%,24px) scale(.98);
-  z-index:1000;
-  max-width:min(92vw,420px);
-  padding:12px 16px;
-  border-radius:14px;
-  background:rgba(8,21,47,.96);
-  color:white;
-  box-shadow:0 18px 50px rgba(8,21,47,.28);
-  font:700 13px Manrope,Arial,sans-serif;
-  letter-spacing:.1px;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .28s ease,transform .35s cubic-bezier(.22,1,.36,1);
-  text-align:center;
-  backdrop-filter:blur(12px);
-}
-.success-toast.show{
-  opacity:1;
-  transform:translate(-50%,0) scale(1);
-}
-@media(max-width:760px){
-  .success-toast{
-    bottom:86px;
-    max-width:calc(100vw - 28px);
-    padding:11px 14px;
-    border-radius:13px;
-    font-size:12px;
-  }
-}
+@media(min-width:761px){.mobile-nav{display:none}}
 
 </style>
 </head>
@@ -660,136 +278,287 @@ body.all-records-mode .table-card{
 </dialog>
 
 <script>
+
 const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-let current=new Date(); current=new Date(current.getFullYear(),current.getMonth(),1);
-let bookings=[], adminPassword=sessionStorage.getItem('adminPassword')||'';
-const body=document.getElementById('calendarBody'),title=document.getElementById('monthTitle'),dlg=document.getElementById('dlg');
-const pad=n=>String(n).padStart(2,'0'),iso=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
+let current=new Date();
+current=new Date(current.getFullYear(),current.getMonth(),1);
+let monthBookings=[];
+let adminPassword=sessionStorage.getItem('adminPassword')||'';
+let toastTimer=null;
+
+const body=document.getElementById('calendarBody');
+const title=document.getElementById('monthTitle');
+const dlg=document.getElementById('dlg');
+const pad=n=>String(n).padStart(2,'0');
+const iso=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const SUCCESS_MESSAGES = [
+
+const SUCCESS_MESSAGES=[
   "✨ Спасибо за запись — удачных измерений ✨",
   "🌟 Запись сохранена. Пусть спектр будет красивым 🌟",
   "⭐ Всё готово — удачной работы на Рамане ⭐",
   "✨ Спасибо! Запись добавлена в календарь ✨",
   "🌠 Удачных измерений и хороших пиков 🌠"
 ];
-let toastTimer = null;
+
 function showSuccessToast(){
-  const toast = document.getElementById("successToast");
-  if (!toast) return;
-  const message = SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
-  toast.textContent = message;
-  toast.classList.add("show");
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+  const toast=document.getElementById('successToast');
+  if(!toast)return;
+  toast.textContent=SUCCESS_MESSAGES[Math.floor(Math.random()*SUCCESS_MESSAGES.length)];
+  toast.classList.add('show');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>toast.classList.remove('show'),3200);
 }
 
-
 function setAdminUi(){
-  const on=!!adminPassword;
+  const on=Boolean(adminPassword);
   document.getElementById('adminBadge').style.display=on?'inline-block':'none';
   document.getElementById('adminBtn').textContent=on?'Выйти из админ-режима':'Администратор';
 }
-async function loadBookings(){
-  const y=current.getFullYear(),m=current.getMonth()+1;
-  const r=await fetch(`/api/bookings?year=${y}&month=${m}`);
-  bookings=await r.json();renderCalendar();renderList();
+
+async function fetchJson(url,options){
+  const r=await fetch(url,options);
+  if(!r.ok){
+    let detail='Ошибка загрузки данных';
+    try{
+      const data=await r.json();
+      detail=data.detail||detail;
+    }catch(_){}
+    throw new Error(detail);
+  }
+  return r.json();
 }
+
+async function loadMonthBookings(){
+  const y=current.getFullYear();
+  const m=current.getMonth()+1;
+  monthBookings=await fetchJson(`/api/bookings?year=${y}&month=${m}`);
+  renderCalendar();
+}
+
 function renderCalendar(){
-  const y=current.getFullYear(),m=current.getMonth();title.textContent=`${MONTHS[m]} ${y}`;body.innerHTML='';
-  const first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),prevDays=new Date(y,m,0).getDate(),start=(first.getDay()+6)%7,cells=Math.ceil((start+days)/7)*7;
-  const now=new Date(),today=iso(now.getFullYear(),now.getMonth(),now.getDate());
+  const y=current.getFullYear(),m=current.getMonth();
+  title.textContent=`${MONTHS[m]} ${y}`;
+  body.innerHTML='';
+
+  const first=new Date(y,m,1);
+  const days=new Date(y,m+1,0).getDate();
+  const prevDays=new Date(y,m,0).getDate();
+  const start=(first.getDay()+6)%7;
+  const cells=Math.ceil((start+days)/7)*7;
+  const now=new Date();
+  const today=iso(now.getFullYear(),now.getMonth(),now.getDate());
+
   for(let i=0;i<cells;i+=7){
-    const week=document.createElement('div');week.className='week';
+    const week=document.createElement('div');
+    week.className='week';
+
     for(let j=0;j<7;j++){
-      const idx=i+j;let dn,cm=m,cy=y,muted=false;
-      if(idx<start){dn=prevDays-start+idx+1;cm=m-1;if(cm<0){cm=11;cy--}muted=true}
-      else if(idx>=start+days){dn=idx-(start+days)+1;cm=m+1;if(cm>11){cm=0;cy++}muted=true}
-      else dn=idx-start+1;
-      const ds=iso(cy,cm,dn),day=document.createElement('div');
+      const idx=i+j;
+      let dn,cm=m,cy=y,muted=false;
+
+      if(idx<start){
+        dn=prevDays-start+idx+1;
+        cm=m-1;
+        if(cm<0){cm=11;cy--;}
+        muted=true;
+      }else if(idx>=start+days){
+        dn=idx-(start+days)+1;
+        cm=m+1;
+        if(cm>11){cm=0;cy++;}
+        muted=true;
+      }else{
+        dn=idx-start+1;
+      }
+
+      const ds=iso(cy,cm,dn);
+      const day=document.createElement('div');
       day.className='day'+(muted?' muted':'')+(ds===today?' today':'');
       day.innerHTML=`<div class="date">${dn}</div>`;
-      bookings.filter(b=>b.booking_date===ds).forEach(b=>{
-        const el=document.createElement('div');el.className='booking';
-        el.innerHTML=`<b>${esc(b.start_time)}–${esc(b.end_time)}</b><br>${esc(b.full_name)}`;
-        day.appendChild(el);
-      });
-      if(!muted)day.onclick=()=>openDialog(ds);
+
+      monthBookings
+        .filter(b=>b.booking_date===ds)
+        .forEach(b=>{
+          const el=document.createElement('div');
+          el.className='booking';
+          el.innerHTML=`<b>${esc(b.start_time)}–${esc(b.end_time)}</b><br>${esc(b.full_name)}`;
+          day.appendChild(el);
+        });
+
+      if(!muted){
+        day.addEventListener('click',()=>openDialog(ds));
+      }
       week.appendChild(day);
     }
     body.appendChild(week);
   }
 }
-async function renderList(){
-  const r=await fetch('/api/bookings');const all=await r.json();
-  const now=new Date().toISOString().slice(0,10),items=all.filter(x=>x.booking_date>=now).slice(0,50),root=document.getElementById('list');
-  if(!items.length){root.innerHTML='<div style="color:var(--muted)">Пока нет будущих записей.</div>';return}
-  root.innerHTML=`<table><thead><tr><th>Дата</th><th>Время</th><th>ФИО</th><th>Подразделение</th><th>Образцы</th><th>Комментарий</th>${adminPassword?'<th></th>':''}</tr></thead><tbody>${items.map(b=>`<tr><td>${esc(b.booking_date.split('-').reverse().join('.'))}</td><td>${esc(b.start_time)}–${esc(b.end_time)}</td><td>${esc(b.full_name)}</td><td>${esc(b.department)||'—'}</td><td>${esc(b.sample_info)||'—'}</td><td>${esc(b.comment)||'—'}</td>${adminPassword?`<td><button class="danger" onclick="deleteBooking(${b.id})">Удалить</button></td>`:''}</tr>`).join('')}</tbody></table>`;
+
+async function renderAllBookings(){
+  const root=document.getElementById('list');
+  root.innerHTML='<div style="color:var(--muted)">Загружаю записи…</div>';
+
+  try{
+    const all=await fetchJson('/api/bookings');
+    if(!all.length){
+      root.innerHTML='<div style="color:var(--muted)">Записей пока нет.</div>';
+      return;
+    }
+
+    root.innerHTML=`<table>
+      <thead><tr>
+        <th>Дата</th><th>Время</th><th>ФИО</th><th>Подразделение</th><th>Образцы</th><th>Комментарий</th>
+        ${adminPassword?'<th></th>':''}
+      </tr></thead>
+      <tbody>
+        ${all.map(b=>`<tr>
+          <td>${esc(b.booking_date.split('-').reverse().join('.'))}</td>
+          <td>${esc(b.start_time)}–${esc(b.end_time)}</td>
+          <td>${esc(b.full_name)}</td>
+          <td>${esc(b.department)||'—'}</td>
+          <td>${esc(b.sample_info)||'—'}</td>
+          <td>${esc(b.comment)||'—'}</td>
+          ${adminPassword?`<td><button class="danger" onclick="deleteBooking(${b.id})">Удалить</button></td>`:''}
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }catch(err){
+    root.innerHTML=`<div style="color:#b42318">${esc(err.message)}</div>`;
+  }
 }
+
+function showCalendarView(){
+  document.body.classList.remove('records-view');
+  document.getElementById('allBookingsSection').style.display='none';
+  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
+  const mobileCalendar=document.getElementById('mobileCalendar');
+  if(mobileCalendar)mobileCalendar.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function showRecordsView(){
+  document.body.classList.add('records-view');
+  document.getElementById('allBookingsSection').style.display='block';
+  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
+  const mobileAll=document.getElementById('mobileAll');
+  if(mobileAll)mobileAll.classList.add('active');
+  await renderAllBookings();
+  document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 function openDialog(d){
   document.getElementById('err').style.display='none';
   document.getElementById('booking_date').value=d||new Date().toISOString().slice(0,10);
   dlg.showModal();
 }
-window.deleteBooking=async function(id){
-  if(!adminPassword)return;
-  if(!confirm('Удалить эту запись?'))return;
-  const r=await fetch(`/api/bookings/${id}`,{method:'DELETE',headers:{'X-Admin-Password':adminPassword}});
-  if(r.status===401){
-    alert('Неверный пароль администратора.');
-    adminPassword='';sessionStorage.removeItem('adminPassword');setAdminUi();await loadBookings();return;
-  }
-  if(!r.ok){alert('Не удалось удалить запись.');return}
-  await loadBookings();
-}
+
 async function toggleAdmin(){
   if(adminPassword){
-    adminPassword='';sessionStorage.removeItem('adminPassword');setAdminUi();await loadBookings();return;
+    adminPassword='';
+    sessionStorage.removeItem('adminPassword');
+    setAdminUi();
+    if(document.body.classList.contains('records-view'))await renderAllBookings();
+    return;
   }
   const p=prompt('Введите пароль администратора:');
   if(!p)return;
-  adminPassword=p;sessionStorage.setItem('adminPassword',p);setAdminUi();await loadBookings();
+  adminPassword=p;
+  sessionStorage.setItem('adminPassword',p);
+  setAdminUi();
+  if(document.body.classList.contains('records-view'))await renderAllBookings();
 }
-document.getElementById('adminBtn').onclick=toggleAdmin;
-document.getElementById('sideAdmin').onclick=toggleAdmin;
-document.getElementById('form').onsubmit=async e=>{
-  e.preventDefault();const data={};
-  ['full_name','department','contact','booking_date','start_time','end_time','sample_info','comment'].forEach(id=>data[id]=document.getElementById(id).value);
-  const r=await fetch('/api/bookings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-  if(!r.ok){const info=await r.json();const err=document.getElementById('err');err.textContent=info.detail||'Не удалось создать запись';err.style.display='block';return}
-  dlg.close();document.getElementById('form').reset();await loadBookings();showSuccessToast();
-};
-document.getElementById('prev').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()-1,1);loadBookings()};
-document.getElementById('next').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()+1,1);loadBookings()};
-['newBooking','sideNew','heroNew'].forEach(id=>document.getElementById(id).onclick=()=>openDialog());
-document.getElementById('x').onclick=()=>dlg.close();
-document.getElementById('cancel').onclick=()=>dlg.close();
-document.getElementById('calendarBtn').onclick=()=>{
-  document.body.classList.remove('all-records-mode');
-  window.scrollTo({top:0,behavior:'smooth'});
-};
-document.getElementById('allBookingsBtn').onclick=()=>{
-  document.body.classList.add('all-records-mode');
-  setTimeout(()=>{
-    document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'});
-  },220);
+
+window.deleteBooking=async function(id){
+  if(!adminPassword)return;
+  if(!confirm('Удалить эту запись?'))return;
+
+  const r=await fetch(`/api/bookings/${id}`,{
+    method:'DELETE',
+    headers:{'X-Admin-Password':adminPassword}
+  });
+
+  if(r.status===401){
+    alert('Неверный пароль администратора.');
+    adminPassword='';
+    sessionStorage.removeItem('adminPassword');
+    setAdminUi();
+    await renderAllBookings();
+    return;
+  }
+
+  if(!r.ok){
+    alert('Не удалось удалить запись.');
+    return;
+  }
+
+  await loadMonthBookings();
+  await renderAllBookings();
 };
 
-document.getElementById('mobileNew').onclick=()=>openDialog();
-document.getElementById('mobileAdmin').onclick=toggleAdmin;
-document.getElementById('mobileAll').onclick=()=>{
-  document.body.classList.add('all-records-mode');
-  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
-  document.getElementById('mobileAll').classList.add('active');
-  setTimeout(()=>document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'}),180);
-};
-document.getElementById('mobileCalendar').onclick=()=>{
-  document.body.classList.remove('all-records-mode');
-  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
-  document.getElementById('mobileCalendar').classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-};
-setAdminUi();loadBookings();
+document.getElementById('form').addEventListener('submit',async e=>{
+  e.preventDefault();
+
+  const data={};
+  ['full_name','department','contact','booking_date','start_time','end_time','sample_info','comment']
+    .forEach(id=>data[id]=document.getElementById(id).value);
+
+  const r=await fetch('/api/bookings',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  });
+
+  if(!r.ok){
+    const info=await r.json();
+    const err=document.getElementById('err');
+    err.textContent=info.detail||'Не удалось создать запись';
+    err.style.display='block';
+    return;
+  }
+
+  dlg.close();
+  document.getElementById('form').reset();
+  await loadMonthBookings();
+  showSuccessToast();
+});
+
+document.getElementById('prev').addEventListener('click',async()=>{
+  current=new Date(current.getFullYear(),current.getMonth()-1,1);
+  await loadMonthBookings();
+});
+document.getElementById('next').addEventListener('click',async()=>{
+  current=new Date(current.getFullYear(),current.getMonth()+1,1);
+  await loadMonthBookings();
+});
+
+['newBooking','sideNew','heroNew'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('click',()=>openDialog());
+});
+
+document.getElementById('adminBtn').addEventListener('click',toggleAdmin);
+document.getElementById('sideAdmin').addEventListener('click',toggleAdmin);
+document.getElementById('calendarBtn').addEventListener('click',showCalendarView);
+document.getElementById('allBookingsBtn').addEventListener('click',showRecordsView);
+
+document.getElementById('x').addEventListener('click',()=>dlg.close());
+document.getElementById('cancel').addEventListener('click',()=>dlg.close());
+
+const mobileNew=document.getElementById('mobileNew');
+const mobileAdmin=document.getElementById('mobileAdmin');
+const mobileAll=document.getElementById('mobileAll');
+const mobileCalendar=document.getElementById('mobileCalendar');
+
+if(mobileNew)mobileNew.addEventListener('click',()=>openDialog());
+if(mobileAdmin)mobileAdmin.addEventListener('click',toggleAdmin);
+if(mobileAll)mobileAll.addEventListener('click',showRecordsView);
+if(mobileCalendar)mobileCalendar.addEventListener('click',showCalendarView);
+
+setAdminUi();
+loadMonthBookings().catch(err=>{
+  body.innerHTML=`<div style="padding:18px;color:#b42318">${esc(err.message)}</div>`;
+});
+
 </script>
 
 <nav class="mobile-nav">
@@ -798,8 +567,6 @@ setAdminUi();loadBookings();
   <button id="mobileAll"><span class="ico">≡</span>Все записи</button>
   <button id="mobileAdmin"><span class="ico">◇</span>Админ</button>
 </nav>
-
-
 <div id="successToast" class="success-toast" role="status" aria-live="polite"></div>
 
 </body>
