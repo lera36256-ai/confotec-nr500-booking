@@ -5,162 +5,99 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Запись на Confotec NR500</title>
 <style>
-:root{
-  --blue:#0b63f6;--blue-soft:#eaf2ff;--sky:#c9e9fb;--line:#e3e8ef;
-  --bg:#f6f8fb;--text:#172033;--muted:#667085;--warn:#fff6df;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+:root{--blue:#0b63f6;--blue-soft:#eaf2ff;--sky:#c9e9fb;--line:#e3e8ef;--bg:#f6f8fb;--text:#172033;--muted:#667085;--warn:#fff6df;--danger:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
 header{background:var(--sky);border-bottom:1px solid #afd9ef;padding:0 28px;min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand{font-weight:700;font-size:19px;color:#153b67}
-.brand span{color:#d97900}
-nav{display:flex;gap:4px}
-nav button{border:0;background:transparent;padding:12px 15px;border-radius:7px;color:#1455a0;cursor:pointer}
-nav .active{background:var(--blue);color:#fff}
-.user{font-size:14px}
-main{max-width:1480px;margin:0 auto;padding:30px 24px 50px}
-h1{text-align:center;font-size:29px;margin:8px 0 28px}
-.instrument{font-size:14px;color:var(--muted);text-align:center;margin-top:-17px;margin-bottom:28px}
-.toolbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;margin-bottom:14px}
-.left{display:flex;align-items:center;gap:10px}
-.device{background:white;border:1px solid #ccd5e0;padding:10px 12px;border-radius:8px;min-width:360px}
-.monthnav{display:flex;align-items:center;gap:16px;font-size:21px;font-weight:700}
-.icon{width:38px;height:38px;border:1px solid #cbd5e1;background:white;border-radius:8px;color:var(--blue);font-size:24px;cursor:pointer}
-.right{display:flex;justify-content:flex-end}
-.primary{background:var(--blue);color:white;border:0;border-radius:8px;padding:11px 17px;font-weight:700;cursor:pointer}
-.secondary{background:white;color:#263244;border:1px solid #cbd5e1;border-radius:8px;padding:9px 13px;cursor:pointer}
-.calendar{background:white;border:1px solid var(--line);border-radius:11px;overflow:hidden}
-.weekdays,.week{display:grid;grid-template-columns:repeat(7,1fr)}
-.weekday{padding:12px 8px;text-align:center;font-size:14px;font-weight:700;border-bottom:1px solid var(--line);background:#fbfcfe}
-.day{min-height:142px;padding:9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer}
-.day:nth-child(7){border-right:0}
-.day.muted{background:#fafbfc;color:#a0a7b2}
-.day.today{background:var(--warn)}
-.date{font-size:13px;margin-bottom:7px}
+.brand{font-weight:700;font-size:19px;color:#153b67}.brand span{color:#d97900}
+nav{display:flex;gap:4px}nav button{border:0;background:transparent;padding:12px 15px;border-radius:7px;color:#1455a0;cursor:pointer}nav .active{background:var(--blue);color:#fff}
+main{max-width:1480px;margin:0 auto;padding:30px 24px 50px}h1{text-align:center;font-size:29px;margin:8px 0 8px}.instrument{text-align:center;color:var(--muted);margin-bottom:28px}
+.toolbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;margin-bottom:14px}.left{display:flex;align-items:center;gap:10px}.device{background:white;border:1px solid #ccd5e0;padding:10px 12px;border-radius:8px}
+.monthnav{display:flex;align-items:center;gap:16px;font-size:21px;font-weight:700}.icon{width:38px;height:38px;border:1px solid #cbd5e1;background:white;border-radius:8px;color:var(--blue);font-size:24px;cursor:pointer}.right{display:flex;justify-content:flex-end;gap:8px}
+.primary{background:var(--blue);color:white;border:0;border-radius:8px;padding:11px 17px;font-weight:700;cursor:pointer}.secondary{background:white;border:1px solid #cbd5e1;border-radius:8px;padding:9px 13px;cursor:pointer}.danger{background:white;color:var(--danger);border:1px solid #efb6b6;border-radius:7px;padding:7px 10px;cursor:pointer;font-weight:700}
+.calendar{background:white;border:1px solid var(--line);border-radius:11px;overflow:hidden}.weekdays,.week{display:grid;grid-template-columns:repeat(7,1fr)}.weekday{padding:12px 8px;text-align:center;font-size:14px;font-weight:700;border-bottom:1px solid var(--line);background:#fbfcfe}
+.day{min-height:142px;padding:9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer}.day:nth-child(7){border-right:0}.day.muted{background:#fafbfc;color:#a0a7b2}.day.today{background:var(--warn)}.date{font-size:13px;margin-bottom:7px}
 .booking{background:var(--blue-soft);border-left:3px solid var(--blue);border-radius:6px;padding:7px 8px;margin:6px 0;font-size:12px;line-height:1.35}
-.panel{background:white;border:1px solid var(--line);border-radius:11px;margin-top:22px;padding:18px}
-.panel h2{font-size:20px;margin:0 0 14px}
-table{width:100%;border-collapse:collapse}
-th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
-th{color:var(--muted)}
-.empty{color:var(--muted);padding:12px 0}
-dialog{border:0;border-radius:14px;padding:0;width:min(560px,94vw);box-shadow:0 24px 70px rgba(0,0,0,.22)}
-dialog::backdrop{background:rgba(0,0,0,.35)}
-.modal-head{display:flex;justify-content:space-between;align-items:center;padding:17px 20px;border-bottom:1px solid var(--line)}
-.close{font-size:24px;border:0;background:transparent;cursor:pointer;color:#667085}
-.modal-body{padding:20px}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}
-label{font-size:13px;font-weight:700;color:#475467}
-input,textarea{font:inherit;border:1px solid #cbd5e1;border-radius:8px;padding:10px 11px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:17px}
-.notice{font-size:13px;color:#475467;margin-top:13px}
-.error{background:#fff0f0;color:#a51d1d;border:1px solid #fac7c7;border-radius:8px;padding:10px;margin-bottom:12px;display:none}
-footer{text-align:center;color:#667085;padding:0 0 26px}
-@media(max-width:900px){
-  header{align-items:flex-start;flex-direction:column;padding:14px}
-  nav{flex-wrap:wrap}.toolbar{grid-template-columns:1fr}.monthnav{justify-content:center}.right{justify-content:flex-start}
-  .device{min-width:0;width:100%}.weekdays{display:none}.week{grid-template-columns:1fr}.day.muted{display:none}.day{min-height:90px;border-right:0}
-  table{display:block;overflow-x:auto}
-}
+.panel{background:white;border:1px solid var(--line);border-radius:11px;margin-top:22px;padding:18px}.panel h2{font-size:20px;margin:0 0 14px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}th{color:var(--muted)}
+.admin-badge{display:none;background:#e8f5e9;color:#246b2e;border:1px solid #b7ddb9;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:700}
+dialog{border:0;border-radius:14px;padding:0;width:min(560px,94vw);box-shadow:0 24px 70px rgba(0,0,0,.22)}dialog::backdrop{background:rgba(0,0,0,.35)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:17px 20px;border-bottom:1px solid var(--line)}.close{font-size:24px;border:0;background:transparent;cursor:pointer}.modal-body{padding:20px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}label{font-size:13px;font-weight:700;color:#475467}input,textarea{font:inherit;border:1px solid #cbd5e1;border-radius:8px;padding:10px 11px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:17px}.error{background:#fff0f0;color:#a51d1d;border:1px solid #fac7c7;border-radius:8px;padding:10px;margin-bottom:12px;display:none}
+@media(max-width:900px){header{align-items:flex-start;flex-direction:column;padding:14px}.toolbar{grid-template-columns:1fr}.monthnav{justify-content:center}.weekdays{display:none}.week{grid-template-columns:1fr}.day.muted{display:none}.day{min-height:90px;border-right:0}table{display:block;overflow-x:auto}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><span>Raman</span> · ИОНХ РАН</div>
-  <nav>
-    <button>Инструкции</button>
-    <button id="topNew">Новая запись</button>
-    <button class="active">Все записи</button>
-  </nav>
-  <div class="user">Система бронирования оборудования</div>
+<div class="brand"><span>Raman</span> · ИОНХ РАН</div>
+<nav><button id="topNew">Новая запись</button><button class="active">Все записи</button></nav>
+<div>Система бронирования оборудования</div>
 </header>
 
 <main>
-  <h1>Запись на Рамановский микроскоп Confotec NR500</h1>
-  <div class="instrument">Белоруссия, 2022</div>
+<h1>Рамановский микроскоп Confotec NR500</h1>
+<div class="instrument">Белоруссия, 2022</div>
 
-  <div class="toolbar">
-    <div class="left">
-      <span>Прибор:</span>
-      <div class="device">Рамановский микроскоп Confotec NR500 (Белоруссия, 2022)</div>
-    </div>
-    <div class="monthnav">
-      <button class="icon" id="prev">‹</button>
-      <span id="monthTitle"></span>
-      <button class="icon" id="next">›</button>
-    </div>
-    <div class="right"><button class="primary" id="newBooking">+ Новая запись</button></div>
-  </div>
+<div class="toolbar">
+<div class="left"><b>Прибор:</b><div class="device">Рамановский микроскоп Confotec NR500 (Белоруссия, 2022)</div></div>
+<div class="monthnav"><button class="icon" id="prev">‹</button><span id="monthTitle"></span><button class="icon" id="next">›</button></div>
+<div class="right">
+<span id="adminBadge" class="admin-badge">Администратор</span>
+<button class="secondary" id="adminBtn">Администратор</button>
+<button class="primary" id="newBooking">+ Новая запись</button>
+</div>
+</div>
 
-  <div class="calendar">
-    <div class="weekdays">
-      <div class="weekday">Понедельник</div><div class="weekday">Вторник</div><div class="weekday">Среда</div>
-      <div class="weekday">Четверг</div><div class="weekday">Пятница</div><div class="weekday">Суббота</div><div class="weekday">Воскресенье</div>
-    </div>
-    <div id="calendarBody"></div>
-  </div>
+<div class="calendar">
+<div class="weekdays"><div class="weekday">Понедельник</div><div class="weekday">Вторник</div><div class="weekday">Среда</div><div class="weekday">Четверг</div><div class="weekday">Пятница</div><div class="weekday">Суббота</div><div class="weekday">Воскресенье</div></div>
+<div id="calendarBody"></div>
+</div>
 
-  <section class="panel">
-    <h2>Ближайшие записи</h2>
-    <div id="list"></div>
-  </section>
+<section class="panel"><h2>Ближайшие записи</h2><div id="list"></div></section>
 </main>
-<footer>Confotec NR500 · общая система записи</footer>
 
 <dialog id="dlg">
-  <div class="modal-head"><strong>Новая запись</strong><button class="close" id="x">×</button></div>
-  <form id="form" class="modal-body">
-    <div class="error" id="err"></div>
-    <div class="field">
-      <label>ФИО *</label>
-      <input id="full_name" required placeholder="Иванов Иван Иванович">
-    </div>
-    <div class="grid2">
-      <div class="field"><label>Подразделение / лаборатория</label><input id="department" placeholder="Наименование подразделения"></div>
-      <div class="field"><label>Контакт</label><input id="contact" placeholder="E-mail или телефон"></div>
-    </div>
-    <div class="field"><label>Дата *</label><input id="booking_date" type="date" required></div>
-    <div class="grid2">
-      <div class="field"><label>Начало *</label><input id="start_time" type="time" value="10:00" required></div>
-      <div class="field"><label>Окончание *</label><input id="end_time" type="time" value="12:00" required></div>
-    </div>
-    <div class="field"><label>Информация об образцах</label><textarea id="sample_info" rows="2" placeholder="Количество образцов, тип образца"></textarea></div>
-    <div class="field"><label>Комментарий</label><textarea id="comment" rows="3" placeholder="Дополнительная информация"></textarea></div>
-    <div class="notice">Запись появится в общем календаре и будет видна всем пользователям сайта.</div>
-    <div class="modal-actions"><button type="button" class="secondary" id="cancel">Отмена</button><button class="primary" type="submit">Записаться</button></div>
-  </form>
+<div class="modal-head"><strong>Новая запись</strong><button class="close" id="x">×</button></div>
+<form id="form" class="modal-body">
+<div class="error" id="err"></div>
+<div class="field"><label>ФИО *</label><input id="full_name" required placeholder="Иванов Иван Иванович"></div>
+<div class="grid2"><div class="field"><label>Подразделение / лаборатория</label><input id="department" placeholder="Наименование подразделения"></div><div class="field"><label>Контакт</label><input id="contact" placeholder="E-mail или телефон"></div></div>
+<div class="field"><label>Дата *</label><input id="booking_date" type="date" required></div>
+<div class="grid2"><div class="field"><label>Начало *</label><input id="start_time" type="time" value="10:00" required></div><div class="field"><label>Окончание *</label><input id="end_time" type="time" value="12:00" required></div></div>
+<div class="field"><label>Информация об образцах</label><textarea id="sample_info" rows="2" placeholder="Количество образцов, тип образца"></textarea></div>
+<div class="field"><label>Комментарий</label><textarea id="comment" rows="3" placeholder="Дополнительная информация"></textarea></div>
+<div class="modal-actions"><button type="button" class="secondary" id="cancel">Отмена</button><button class="primary" type="submit">Записаться</button></div>
+</form>
 </dialog>
 
 <script>
 const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 let current=new Date(); current=new Date(current.getFullYear(),current.getMonth(),1);
-let bookings=[];
-const body=document.getElementById('calendarBody'), title=document.getElementById('monthTitle'), dlg=document.getElementById('dlg');
-const pad=n=>String(n).padStart(2,'0');
-const iso=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
+let bookings=[], adminPassword=sessionStorage.getItem('adminPassword')||'';
+const body=document.getElementById('calendarBody'),title=document.getElementById('monthTitle'),dlg=document.getElementById('dlg');
+const pad=n=>String(n).padStart(2,'0'),iso=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+function setAdminUi(){
+  const on=!!adminPassword;
+  document.getElementById('adminBadge').style.display=on?'inline-block':'none';
+  document.getElementById('adminBtn').textContent=on?'Выйти из админ-режима':'Администратор';
+}
 async function loadBookings(){
-  const y=current.getFullYear(), m=current.getMonth()+1;
+  const y=current.getFullYear(),m=current.getMonth()+1;
   const r=await fetch(`/api/bookings?year=${y}&month=${m}`);
   bookings=await r.json();
   renderCalendar(); renderList();
 }
 function renderCalendar(){
-  const y=current.getFullYear(),m=current.getMonth();
-  title.textContent=`${MONTHS[m]} ${y}`; body.innerHTML='';
-  const first=new Date(y,m,1), days=new Date(y,m+1,0).getDate(), prevDays=new Date(y,m,0).getDate();
-  const start=(first.getDay()+6)%7, cells=Math.ceil((start+days)/7)*7;
-  const now=new Date(), today=iso(now.getFullYear(),now.getMonth(),now.getDate());
+  const y=current.getFullYear(),m=current.getMonth();title.textContent=`${MONTHS[m]} ${y}`;body.innerHTML='';
+  const first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),prevDays=new Date(y,m,0).getDate(),start=(first.getDay()+6)%7,cells=Math.ceil((start+days)/7)*7;
+  const now=new Date(),today=iso(now.getFullYear(),now.getMonth(),now.getDate());
   for(let i=0;i<cells;i+=7){
-    const week=document.createElement('div'); week.className='week';
+    const week=document.createElement('div');week.className='week';
     for(let j=0;j<7;j++){
-      const idx=i+j; let dn,cm=m,cy=y,muted=false;
+      const idx=i+j;let dn,cm=m,cy=y,muted=false;
       if(idx<start){dn=prevDays-start+idx+1;cm=m-1;if(cm<0){cm=11;cy--}muted=true}
       else if(idx>=start+days){dn=idx-(start+days)+1;cm=m+1;if(cm>11){cm=0;cy++}muted=true}
       else dn=idx-start+1;
-      const ds=iso(cy,cm,dn), day=document.createElement('div');
+      const ds=iso(cy,cm,dn),day=document.createElement('div');
       day.className='day'+(muted?' muted':'')+(ds===today?' today':'');
       day.innerHTML=`<div class="date">${dn}.${cm+1}.${cy}</div>`;
       bookings.filter(b=>b.booking_date===ds).forEach(b=>{
@@ -168,7 +105,7 @@ function renderCalendar(){
         el.innerHTML=`<b>${esc(b.start_time)}–${esc(b.end_time)}</b><br>${esc(b.full_name)}`;
         day.appendChild(el);
       });
-      if(!muted) day.onclick=()=>openDialog(ds);
+      if(!muted)day.onclick=()=>openDialog(ds);
       week.appendChild(day);
     }
     body.appendChild(week);
@@ -177,28 +114,41 @@ function renderCalendar(){
 async function renderList(){
   const r=await fetch('/api/bookings');
   const all=await r.json();
-  const now=new Date().toISOString().slice(0,10);
-  const items=all.filter(x=>x.booking_date>=now).slice(0,50);
-  const root=document.getElementById('list');
-  if(!items.length){root.innerHTML='<div class="empty">Пока нет будущих записей.</div>';return}
-  root.innerHTML=`<table><thead><tr><th>Дата</th><th>Время</th><th>ФИО</th><th>Подразделение</th><th>Образцы</th><th>Комментарий</th></tr></thead>
-  <tbody>${items.map(b=>`<tr><td>${esc(b.booking_date.split('-').reverse().join('.'))}</td><td>${esc(b.start_time)}–${esc(b.end_time)}</td>
-  <td>${esc(b.full_name)}</td><td>${esc(b.department)||'—'}</td><td>${esc(b.sample_info)||'—'}</td><td>${esc(b.comment)||'—'}</td></tr>`).join('')}</tbody></table>`;
+  const now=new Date().toISOString().slice(0,10),items=all.filter(x=>x.booking_date>=now).slice(0,50),root=document.getElementById('list');
+  if(!items.length){root.innerHTML='<div>Пока нет будущих записей.</div>';return}
+  root.innerHTML=`<table><thead><tr><th>Дата</th><th>Время</th><th>ФИО</th><th>Подразделение</th><th>Образцы</th><th>Комментарий</th>${adminPassword?'<th></th>':''}</tr></thead><tbody>${items.map(b=>`<tr><td>${esc(b.booking_date.split('-').reverse().join('.'))}</td><td>${esc(b.start_time)}–${esc(b.end_time)}</td><td>${esc(b.full_name)}</td><td>${esc(b.department)||'—'}</td><td>${esc(b.sample_info)||'—'}</td><td>${esc(b.comment)||'—'}</td>${adminPassword?`<td><button class="danger" onclick="deleteBooking(${b.id})">Удалить</button></td>`:''}</tr>`).join('')}</tbody></table>`;
 }
 function openDialog(d){
   document.getElementById('err').style.display='none';
   document.getElementById('booking_date').value=d||new Date().toISOString().slice(0,10);
   dlg.showModal();
 }
+window.deleteBooking=async function(id){
+  if(!adminPassword)return;
+  if(!confirm('Удалить эту запись?'))return;
+  const r=await fetch(`/api/bookings/${id}`,{method:'DELETE',headers:{'X-Admin-Password':adminPassword}});
+  if(r.status===401){
+    alert('Неверный пароль администратора.');
+    adminPassword='';sessionStorage.removeItem('adminPassword');setAdminUi();await loadBookings();return;
+  }
+  if(!r.ok){alert('Не удалось удалить запись.');return}
+  await loadBookings();
+}
+document.getElementById('adminBtn').onclick=async()=>{
+  if(adminPassword){
+    adminPassword='';sessionStorage.removeItem('adminPassword');setAdminUi();await loadBookings();return;
+  }
+  const p=prompt('Введите пароль администратора:');
+  if(!p)return;
+  adminPassword=p;sessionStorage.setItem('adminPassword',p);setAdminUi();await loadBookings();
+};
 document.getElementById('form').onsubmit=async e=>{
   e.preventDefault();
   const data={};
   ['full_name','department','contact','booking_date','start_time','end_time','sample_info','comment'].forEach(id=>data[id]=document.getElementById(id).value);
   const r=await fetch('/api/bookings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-  if(!r.ok){
-    const info=await r.json();const err=document.getElementById('err');err.textContent=info.detail||'Не удалось создать запись';err.style.display='block';return;
-  }
-  dlg.close(); document.getElementById('form').reset(); await loadBookings();
+  if(!r.ok){const info=await r.json();const err=document.getElementById('err');err.textContent=info.detail||'Не удалось создать запись';err.style.display='block';return}
+  dlg.close();document.getElementById('form').reset();await loadBookings();
 };
 document.getElementById('prev').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()-1,1);loadBookings()};
 document.getElementById('next').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()+1,1);loadBookings()};
@@ -206,7 +156,7 @@ document.getElementById('newBooking').onclick=()=>openDialog();
 document.getElementById('topNew').onclick=()=>openDialog();
 document.getElementById('x').onclick=()=>dlg.close();
 document.getElementById('cancel').onclick=()=>dlg.close();
-loadBookings();
+setAdminUi();loadBookings();
 </script>
 </body>
 </html>
