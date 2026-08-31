@@ -666,21 +666,22 @@ let bookings=[], adminPassword=sessionStorage.getItem('adminPassword')||'';
 const body=document.getElementById('calendarBody'),title=document.getElementById('monthTitle'),dlg=document.getElementById('dlg');
 const pad=n=>String(n).padStart(2,'0'),iso=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
 const SUCCESS_MESSAGES = [
-  '✨ Спасибо за запись — удачных измерений ✨',
-  '🌟 Запись сохранена. Пусть спектр будет красивым 🌟',
-  '⭐ Всё готово — удачной работы на Рамане ⭐',
-  '✨ Спасибо! Запись добавлена в календарь ✨',
-  '🌠 Удачных измерений и хороших пиков 🌠'
+  "✨ Спасибо за запись — удачных измерений ✨",
+  "🌟 Запись сохранена. Пусть спектр будет красивым 🌟",
+  "⭐ Всё готово — удачной работы на Рамане ⭐",
+  "✨ Спасибо! Запись добавлена в календарь ✨",
+  "🌠 Удачных измерений и хороших пиков 🌠"
 ];
-let toastTimer;
+let toastTimer = null;
 function showSuccessToast(){
-  const toast=document.getElementById('successToast');
-  toast.textContent=SUCCESS_MESSAGES[Math.floor(Math.random()*SUCCESS_MESSAGES.length)];
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>toast.classList.remove('show'),3200);
+  const toast = document.getElementById("successToast");
+  if (!toast) return;
+  const message = SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
+  toast.textContent = message;
+  toast.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
 }
 
 
