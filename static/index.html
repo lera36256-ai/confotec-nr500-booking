@@ -78,6 +78,69 @@ dialog{border:0;border-radius:18px;padding:0;width:min(560px,94vw);box-shadow:0 
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}.close{font-size:24px;border:0;background:transparent;cursor:pointer}.modal-body{padding:20px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}.field label{font-size:12px;font-weight:800;color:#59647b}input,textarea{font:inherit;border:1px solid #d7ddea;border-radius:10px;padding:11px;background:#fff}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:17px}.error{background:#fff0f0;color:#a51d1d;border:1px solid #fac7c7;border-radius:10px;padding:10px;margin-bottom:12px;display:none}
 @media(max-width:1100px){.shell{grid-template-columns:1fr}.sidebar{display:none}.hero-grid{grid-template-columns:1fr}.raman{font-size:86px}.hero{min-height:420px}}
 @media(max-width:760px){.main{padding:16px}.topbar{align-items:flex-start;gap:10px;flex-direction:column}.weekdays{display:none}.week{grid-template-columns:1fr}.day.muted{display:none}.day{min-height:78px;border-right:0}.hero{padding:22px}.raman{font-size:66px;letter-spacing:-4px}.orb,.orbit{opacity:.5}table{display:block;overflow-x:auto}}
+
+/* compact mode when "Все записи" is opened */
+.hero-grid{
+  transition:grid-template-columns .55s cubic-bezier(.22,1,.36,1), gap .55s cubic-bezier(.22,1,.36,1);
+}
+.hero{
+  transition:min-height .55s cubic-bezier(.22,1,.36,1), padding .55s cubic-bezier(.22,1,.36,1),
+             transform .55s cubic-bezier(.22,1,.36,1), opacity .45s ease;
+}
+.raman,.raman em,.device-name,.device-sub,.kicker,.cta,.orb,.orbit{
+  transition:all .55s cubic-bezier(.22,1,.36,1);
+}
+.calendar-card{
+  transition:transform .55s cubic-bezier(.22,1,.36,1);
+}
+body.all-records-mode .hero-grid{
+  grid-template-columns:1fr;
+  gap:12px;
+}
+body.all-records-mode .hero{
+  min-height:150px;
+  padding:18px 24px;
+  transform:translateY(-6px);
+}
+body.all-records-mode .kicker{
+  opacity:0;
+  height:0;
+  margin:0;
+  overflow:hidden;
+}
+body.all-records-mode .raman{
+  font-size:46px;
+  letter-spacing:-2px;
+  margin:0;
+}
+body.all-records-mode .raman em{
+  display:inline;
+  font-size:16px;
+  margin-left:12px;
+  letter-spacing:.4px;
+}
+body.all-records-mode .device-name{
+  font-size:16px;
+  margin:10px 0 0;
+}
+body.all-records-mode .device-sub,
+body.all-records-mode .cta,
+body.all-records-mode .orb,
+body.all-records-mode .orbit{
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(-12px) scale(.96);
+  height:0;
+  margin:0;
+  overflow:hidden;
+}
+body.all-records-mode .calendar-card{
+  transform:translateY(-4px);
+}
+body.all-records-mode .table-card{
+  scroll-margin-top:18px;
+}
+
 </style>
 </head>
 <body>
@@ -87,9 +150,9 @@ dialog{border:0;border-radius:18px;padding:0;width:min(560px,94vw);box-shadow:0 
       <div class="logo">Раман<span class="spark">✦</span><em>ИОНХ РАН</em></div>
     </div>
     <div class="menu">
-      <button class="active">▣ &nbsp; Календарь</button>
+      <button class="active" id="calendarBtn">▣ &nbsp; Календарь</button>
       <button id="sideNew">＋ &nbsp; Новая запись</button>
-      <button>◫ &nbsp; Все записи</button>
+      <button id="allBookingsBtn">◫ &nbsp; Все записи</button>
       <button id="sideAdmin">◇ &nbsp; Админ</button>
     </div>
     <div class="side-foot">
@@ -136,7 +199,7 @@ dialog{border:0;border-radius:18px;padding:0;width:min(560px,94vw);box-shadow:0 
       </div>
     </section>
 
-    <section class="table-card">
+    <section class="table-card" id="allBookingsSection">
       <div class="table-title">Ближайшие записи</div>
       <div id="list"></div>
     </section>
@@ -250,6 +313,16 @@ document.getElementById('next').onclick=()=>{current=new Date(current.getFullYea
 ['newBooking','sideNew','heroNew'].forEach(id=>document.getElementById(id).onclick=()=>openDialog());
 document.getElementById('x').onclick=()=>dlg.close();
 document.getElementById('cancel').onclick=()=>dlg.close();
+document.getElementById('calendarBtn').onclick=()=>{
+  document.body.classList.remove('all-records-mode');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+document.getElementById('allBookingsBtn').onclick=()=>{
+  document.body.classList.add('all-records-mode');
+  setTimeout(()=>{
+    document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'});
+  },220);
+};
 setAdminUi();loadBookings();
 </script>
 </body>
