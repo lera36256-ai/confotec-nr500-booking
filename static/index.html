@@ -141,6 +141,439 @@ body.all-records-mode .table-card{
   scroll-margin-top:18px;
 }
 
+
+/* ===== Mobile redesign ===== */
+@media (max-width: 760px){
+  html,body{
+    background:
+      radial-gradient(circle at 92% 0%,rgba(166,139,255,.22),transparent 26%),
+      radial-gradient(circle at 18% 34%,rgba(115,208,255,.15),transparent 28%),
+      #f7f9fd;
+  }
+
+  body{overflow-x:hidden}
+  .shell{display:block;min-height:100vh}
+  .main{padding:14px 12px 88px}
+
+  /* mobile top bar */
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:30;
+    margin:-14px -12px 14px;
+    padding:12px 14px;
+    background:rgba(247,249,253,.86);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(220,226,239,.9);
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+
+  .titleline{
+    font-size:12px;
+    line-height:1.25;
+    max-width:56%;
+    color:#59647b;
+  }
+
+  .top-actions{
+    gap:6px;
+    flex-wrap:nowrap;
+  }
+
+  .top-actions .secondary{
+    display:none;
+  }
+
+  .top-actions .primary{
+    padding:9px 11px;
+    font-size:12px;
+    border-radius:11px;
+    box-shadow:0 8px 20px rgba(76,84,234,.18);
+  }
+
+  .admin-badge{
+    font-size:10px;
+    padding:6px 8px;
+  }
+
+  /* hero becomes compact editorial card */
+  .hero-grid{
+    display:block;
+  }
+
+  .hero{
+    min-height:0;
+    padding:20px 18px 22px;
+    border-radius:22px;
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+
+  .kicker{
+    font-size:10px;
+    letter-spacing:1.6px;
+  }
+
+  .raman{
+    font-size:58px;
+    letter-spacing:-4px;
+    margin:14px 0 0;
+    line-height:.86;
+  }
+
+  .raman em{
+    font-size:17px;
+    margin-top:12px;
+    letter-spacing:.6px;
+  }
+
+  .device-name{
+    font-size:18px;
+    margin:22px 0 7px;
+    max-width:250px;
+  }
+
+  .device-sub{
+    font-size:13px;
+    line-height:1.55;
+    max-width:78%;
+  }
+
+  .cta{
+    margin-top:18px;
+    width:auto;
+    padding:12px 16px;
+    font-size:13px;
+    border-radius:12px;
+  }
+
+  .orb{
+    width:110px;
+    height:110px;
+    right:10px;
+    bottom:20px;
+    opacity:.82;
+  }
+
+  .orbit{
+    width:155px;
+    height:58px;
+    right:-4px;
+    bottom:45px;
+    opacity:.75;
+  }
+
+  /* calendar optimized for touch */
+  .calendar-card{
+    border-radius:20px;
+    padding:12px;
+    margin-bottom:14px;
+  }
+
+  .cal-head{
+    gap:8px;
+    align-items:center;
+  }
+
+  .monthnav{
+    width:100%;
+    justify-content:space-between;
+    font-size:18px;
+  }
+
+  .icon{
+    width:36px;
+    height:36px;
+    border-radius:11px;
+  }
+
+  .cal-head > div:last-child{
+    display:none;
+  }
+
+  .calendar{
+    border-radius:14px;
+    overflow:hidden;
+  }
+
+  .weekdays{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+  }
+
+  .weekday{
+    padding:8px 2px;
+    font-size:10px;
+  }
+
+  .week{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+  }
+
+  .day,
+  .day.muted{
+    display:block;
+    min-height:76px;
+    padding:5px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:white;
+    color:inherit;
+  }
+
+  .day.muted{
+    background:#fafbfe;
+    color:#c2c8d4;
+  }
+
+  .date{
+    font-size:10px;
+    margin-bottom:4px;
+  }
+
+  .day.today .date{
+    padding:3px 5px;
+  }
+
+  .booking{
+    padding:4px 5px;
+    font-size:8.5px;
+    border-radius:6px;
+    line-height:1.2;
+    margin-top:4px;
+    overflow:hidden;
+  }
+
+  .booking b{
+    font-size:9px;
+  }
+
+  /* bookings become cards instead of wide table */
+  .table-card{
+    margin-top:14px;
+    border-radius:20px;
+    padding:14px;
+  }
+
+  .table-title{
+    font-size:18px;
+    margin-bottom:12px;
+  }
+
+  table,thead,tbody,tr,th,td{
+    display:block;
+    width:100%;
+  }
+
+  thead{
+    display:none;
+  }
+
+  tbody{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  tr{
+    background:white;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    box-shadow:0 8px 22px rgba(29,45,91,.05);
+  }
+
+  td{
+    border:0;
+    padding:4px 0;
+    font-size:12px;
+  }
+
+  td:nth-child(1){
+    font-weight:800;
+    font-size:13px;
+  }
+
+  td:nth-child(2){
+    color:#51607a;
+    font-weight:700;
+  }
+
+  td:nth-child(3){
+    font-size:13px;
+    font-weight:800;
+    margin-top:4px;
+  }
+
+  td:nth-child(4)::before{content:"Подразделение · ";color:#929bad;font-weight:600}
+  td:nth-child(5)::before{content:"Образцы · ";color:#929bad;font-weight:600}
+  td:nth-child(6)::before{content:"Комментарий · ";color:#929bad;font-weight:600}
+
+  td:last-child{
+    margin-top:6px;
+  }
+
+  .danger{
+    width:100%;
+    padding:9px 10px;
+  }
+
+  /* mobile bottom navigation */
+  .mobile-nav{
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    z-index:50;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:4px;
+    padding:6px;
+    background:rgba(7,20,47,.94);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:18px;
+    box-shadow:0 18px 50px rgba(4,14,36,.32);
+  }
+
+  .mobile-nav button{
+    border:0;
+    background:transparent;
+    color:#dce5ff;
+    padding:9px 4px 8px;
+    border-radius:13px;
+    font:600 10px Manrope;
+    cursor:pointer;
+  }
+
+  .mobile-nav button.active{
+    background:linear-gradient(135deg,#4c6fff,#9e5df4);
+    color:white;
+  }
+
+  .mobile-nav .ico{
+    display:block;
+    font-size:18px;
+    margin-bottom:3px;
+  }
+
+  /* modal as bottom sheet */
+  dialog{
+    width:100%;
+    max-width:none;
+    margin:auto 0 0 0;
+    border-radius:22px 22px 0 0;
+    max-height:88vh;
+    overflow:auto;
+  }
+
+  dialog::backdrop{
+    background:rgba(6,13,31,.48);
+  }
+
+  .modal-head{
+    position:sticky;
+    top:0;
+    z-index:2;
+    background:white;
+  }
+
+  .modal-body{
+    padding:16px 16px 24px;
+  }
+
+  .grid2{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+
+  input,textarea{
+    font-size:16px;
+    padding:12px;
+  }
+
+  .modal-actions{
+    position:sticky;
+    bottom:0;
+    background:white;
+    padding-top:10px;
+  }
+
+  .modal-actions .primary{
+    flex:1;
+  }
+
+  /* compact records mode on mobile */
+  body.all-records-mode .hero{
+    min-height:0;
+    padding:14px 16px;
+    margin-bottom:10px;
+  }
+
+  body.all-records-mode .raman{
+    font-size:36px;
+    letter-spacing:-2px;
+  }
+
+  body.all-records-mode .raman em{
+    font-size:13px;
+    margin-left:8px;
+  }
+
+  body.all-records-mode .device-name{
+    font-size:14px;
+    margin-top:8px;
+  }
+
+  body.all-records-mode .calendar-card{
+    transform:none;
+  }
+}
+
+@media (min-width:761px){
+  .mobile-nav{display:none}
+}
+
+
+/* success toast */
+.success-toast{
+  position:fixed;
+  left:50%;
+  bottom:28px;
+  transform:translate(-50%,24px) scale(.98);
+  z-index:1000;
+  max-width:min(92vw,420px);
+  padding:12px 16px;
+  border-radius:14px;
+  background:rgba(8,21,47,.96);
+  color:white;
+  box-shadow:0 18px 50px rgba(8,21,47,.28);
+  font:700 13px Manrope,Arial,sans-serif;
+  letter-spacing:.1px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .28s ease,transform .35s cubic-bezier(.22,1,.36,1);
+  text-align:center;
+  backdrop-filter:blur(12px);
+}
+.success-toast.show{
+  opacity:1;
+  transform:translate(-50%,0) scale(1);
+}
+@media(max-width:760px){
+  .success-toast{
+    bottom:86px;
+    max-width:calc(100vw - 28px);
+    padding:11px 14px;
+    border-radius:13px;
+    font-size:12px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -234,6 +667,23 @@ const body=document.getElementById('calendarBody'),title=document.getElementById
 const pad=n=>String(n).padStart(2,'0'),iso=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+const SUCCESS_MESSAGES = [
+  '✨ Спасибо за запись — удачных измерений ✨',
+  '🌟 Запись сохранена. Пусть спектр будет красивым 🌟',
+  '⭐ Всё готово — удачной работы на Рамане ⭐',
+  '✨ Спасибо! Запись добавлена в календарь ✨',
+  '🌠 Удачных измерений и хороших пиков 🌠'
+];
+let toastTimer;
+function showSuccessToast(){
+  const toast=document.getElementById('successToast');
+  toast.textContent=SUCCESS_MESSAGES[Math.floor(Math.random()*SUCCESS_MESSAGES.length)];
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>toast.classList.remove('show'),3200);
+}
+
+
 function setAdminUi(){
   const on=!!adminPassword;
   document.getElementById('adminBadge').style.display=on?'inline-block':'none';
@@ -306,7 +756,7 @@ document.getElementById('form').onsubmit=async e=>{
   ['full_name','department','contact','booking_date','start_time','end_time','sample_info','comment'].forEach(id=>data[id]=document.getElementById(id).value);
   const r=await fetch('/api/bookings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
   if(!r.ok){const info=await r.json();const err=document.getElementById('err');err.textContent=info.detail||'Не удалось создать запись';err.style.display='block';return}
-  dlg.close();document.getElementById('form').reset();await loadBookings();
+  dlg.close();document.getElementById('form').reset();await loadBookings();showSuccessToast();
 };
 document.getElementById('prev').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()-1,1);loadBookings()};
 document.getElementById('next').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()+1,1);loadBookings()};
@@ -323,7 +773,33 @@ document.getElementById('allBookingsBtn').onclick=()=>{
     document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'});
   },220);
 };
+
+document.getElementById('mobileNew').onclick=()=>openDialog();
+document.getElementById('mobileAdmin').onclick=toggleAdmin;
+document.getElementById('mobileAll').onclick=()=>{
+  document.body.classList.add('all-records-mode');
+  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('mobileAll').classList.add('active');
+  setTimeout(()=>document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'}),180);
+};
+document.getElementById('mobileCalendar').onclick=()=>{
+  document.body.classList.remove('all-records-mode');
+  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('mobileCalendar').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
 setAdminUi();loadBookings();
 </script>
+
+<nav class="mobile-nav">
+  <button id="mobileCalendar" class="active"><span class="ico">◫</span>Календарь</button>
+  <button id="mobileNew"><span class="ico">＋</span>Запись</button>
+  <button id="mobileAll"><span class="ico">≡</span>Все записи</button>
+  <button id="mobileAdmin"><span class="ico">◇</span>Админ</button>
+</nav>
+
+
+<div id="successToast" class="success-toast" role="status" aria-live="polite"></div>
+
 </body>
 </html>
