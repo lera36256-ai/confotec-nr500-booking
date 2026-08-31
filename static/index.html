@@ -192,6 +192,19 @@ body.records-view .hero-grid{display:none}
 }
 @media(min-width:761px){.mobile-nav{display:none}}
 
+
+@media(max-width:760px){
+  .mobile-nav button{
+    min-height:54px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    line-height:1.05;
+  }
+  .mobile-nav button:nth-child(2){font-size:9.5px}
+}
+
 </style>
 </head>
 <body>
@@ -316,6 +329,25 @@ function setAdminUi(){
   document.getElementById('adminBtn').textContent=on?'Выйти из админ-режима':'Администратор';
 }
 
+function setActiveSection(section){
+  const desktopCalendar=document.getElementById('calendarBtn');
+  const desktopAll=document.getElementById('allBookingsBtn');
+  const mobileCalendar=document.getElementById('mobileCalendar');
+  const mobileAll=document.getElementById('mobileAll');
+
+  [desktopCalendar,desktopAll,mobileCalendar,mobileAll].forEach(el=>{
+    if(el) el.classList.remove('active');
+  });
+
+  if(section==='calendar'){
+    if(desktopCalendar) desktopCalendar.classList.add('active');
+    if(mobileCalendar) mobileCalendar.classList.add('active');
+  }else if(section==='records'){
+    if(desktopAll) desktopAll.classList.add('active');
+    if(mobileAll) mobileAll.classList.add('active');
+  }
+}
+
 async function fetchJson(url,options){
   const r=await fetch(url,options);
   if(!r.ok){
@@ -430,18 +462,14 @@ async function renderAllBookings(){
 function showCalendarView(){
   document.body.classList.remove('records-view');
   document.getElementById('allBookingsSection').style.display='none';
-  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
-  const mobileCalendar=document.getElementById('mobileCalendar');
-  if(mobileCalendar)mobileCalendar.classList.add('active');
+  setActiveSection('calendar');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 async function showRecordsView(){
   document.body.classList.add('records-view');
   document.getElementById('allBookingsSection').style.display='block';
-  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
-  const mobileAll=document.getElementById('mobileAll');
-  if(mobileAll)mobileAll.classList.add('active');
+  setActiveSection('records');
   await renderAllBookings();
   document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -466,6 +494,11 @@ async function toggleAdmin(){
   sessionStorage.setItem('adminPassword',p);
   setAdminUi();
   if(document.body.classList.contains('records-view'))await renderAllBookings();
+  const mobileAdmin=document.getElementById('mobileAdmin');
+  if(mobileAdmin){
+    if(adminPassword) mobileAdmin.classList.add('active');
+    else mobileAdmin.classList.remove('active');
+  }
 }
 
 window.deleteBooking=async function(id){
@@ -555,6 +588,9 @@ if(mobileAll)mobileAll.addEventListener('click',showRecordsView);
 if(mobileCalendar)mobileCalendar.addEventListener('click',showCalendarView);
 
 setAdminUi();
+setActiveSection('calendar');
+const initialMobileAdmin=document.getElementById('mobileAdmin');
+if(initialMobileAdmin && adminPassword) initialMobileAdmin.classList.add('active');
 loadMonthBookings().catch(err=>{
   body.innerHTML=`<div style="padding:18px;color:#b42318">${esc(err.message)}</div>`;
 });
@@ -562,9 +598,9 @@ loadMonthBookings().catch(err=>{
 </script>
 
 <nav class="mobile-nav">
-  <button id="mobileCalendar" class="active"><span class="ico">◫</span>Календарь</button>
-  <button id="mobileNew"><span class="ico">＋</span>Запись</button>
-  <button id="mobileAll"><span class="ico">≡</span>Все записи</button>
+  <button id="mobileCalendar" class="active"><span class="ico">▣</span>Календарь</button>
+  <button id="mobileNew"><span class="ico">＋</span>Новая запись</button>
+  <button id="mobileAll"><span class="ico">◫</span>Все записи</button>
   <button id="mobileAdmin"><span class="ico">◇</span>Админ</button>
 </nav>
 <div id="successToast" class="success-toast" role="status" aria-live="polite"></div>
