@@ -1,16 +1,16 @@
-
 import os
-from datetime import date, datetime
+from datetime import date, datetime, time
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
-from sqlalchemy import create_engine, String, Integer, Text, Date, Time, select, and_
+from sqlalchemy import Date, Integer, String, Text, Time, and_, create_engine, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./bookings.db")
-# Render/older providers sometimes return postgres:// instead of postgresql://
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "change-me")
+
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
 elif DATABASE_URL.startswith("postgresql://"):
@@ -31,8 +31,8 @@ class Booking(Base):
     department: Mapped[str] = mapped_column(String(200), default="")
     contact: Mapped[str] = mapped_column(String(200), default="")
     booking_date: Mapped[date] = mapped_column(Date, index=True)
-    start_time: Mapped[datetime.time] = mapped_column(Time)
-    end_time: Mapped[datetime.time] = mapped_column(Time)
+    start_time: Mapped[time] = mapped_column(Time)
+    end_time: Mapped[time] = mapped_column(Time)
     sample_info: Mapped[str] = mapped_column(Text, default="")
     comment: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[str] = mapped_column(String(40), default=lambda: datetime.now().isoformat(timespec="seconds"))
@@ -51,7 +51,7 @@ class BookingIn(BaseModel):
     sample_info: str = Field(default="", max_length=1000)
     comment: str = Field(default="", max_length=2000)
 
-def parse_time(value: str):
+def parse_time(value: str) -> time:
     try:
         return datetime.strptime(value, "%H:%M").time()
     except ValueError:
@@ -71,16 +71,23 @@ def serialize(b: Booking):
         "created_at": b.created_at,
     }
 
+def verify_admin(x_admin_password: Optional[str]):
+    if not x_admin_password or x_admin_password != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Неверный пароль администратора")
+
 @app.get("/")
 def index():
     return FileResponse("static/index.html")
+
+@app.get("/api/health")
+def health():
+    return {"ok": True}
 
 @app.get("/api/bookings")
 def list_bookings(year: Optional[int] = None, month: Optional[int] = None):
     with SessionLocal() as db:
         stmt = select(Booking)
         if year and month:
-            # portable month range
             if month == 12:
                 start = date(year, 12, 1)
                 end = date(year + 1, 1, 1)
@@ -99,7 +106,7 @@ def create_booking(payload: BookingIn):
         raise HTTPException(status_code=400, detail="Время окончания должно быть позже времени начала")
 
     with SessionLocal() as db:
-        overlaps = db.scalar(
+        conflict = db.scalar(
             select(Booking).where(
                 and_(
                     Booking.booking_date == payload.booking_date,
@@ -108,7 +115,7 @@ def create_booking(payload: BookingIn):
                 )
             )
         )
-        if overlaps:
+        if conflict:
             raise HTTPException(status_code=409, detail="Это время уже занято")
 
         booking = Booking(
@@ -127,15 +134,12 @@ def create_booking(payload: BookingIn):
         return serialize(booking)
 
 @app.delete("/api/bookings/{booking_id}")
-def delete_booking(booking_id: int):
+def delete_booking(booking_id: int, x_admin_password: Optional[str] = Header(default=None)):
+    verify_admin(x_admin_password)
     with SessionLocal() as db:
-        b = db.get(Booking, booking_id)
-        if not b:
+        booking = db.get(Booking, booking_id)
+        if not booking:
             raise HTTPException(status_code=404, detail="Запись не найдена")
-        db.delete(b)
+        db.delete(booking)
         db.commit()
-    return {"ok": True}
-
-@app.get("/api/health")
-def health():
     return {"ok": True}
