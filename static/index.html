@@ -226,6 +226,63 @@ body.records-view .hero-grid{display:none}
   }
 }
 
+
+/* Seasonal theme and a calendar whose dimensions never depend on bookings. */
+:root{--accent:#4e67a0;--accent2:#6554a0;--soft:#e6edfc;--soft2:#eee6fa;--orb-light:#c1d6f9;--orb-mid:#99ade6;--orb-deep:#7a71bd;--season-ink:#496087;--season-line:#d5deee}
+html,body{background:radial-gradient(ellipse at 85% 5%,var(--soft2),transparent 45%),var(--bg)}
+body{overflow-x:visible}
+.hero-grid{grid-template-columns:minmax(0,.85fr) minmax(0,1.65fr)}
+.hero,.calendar-card{min-width:0}
+.hero{display:flex;flex-direction:column;min-height:0;background:radial-gradient(ellipse at 80% 75%,var(--soft),transparent 60%),linear-gradient(145deg,#fff,var(--soft2))}
+.hero:after{pointer-events:none;border-color:var(--season-line);box-shadow:0 0 0 50px color-mix(in srgb,var(--soft) 40%,transparent),0 0 0 100px color-mix(in srgb,var(--soft) 20%,transparent)}
+.hero>*{position:relative;z-index:1}
+.raman{font-size:clamp(64px,6.6vw,100px);letter-spacing:-4px}
+.raman em{color:var(--accent)}
+.device-name{font-size:22px;overflow-wrap:anywhere}
+.device-sub{max-width:none;font-size:15px;color:#59657b}
+.cta{align-self:flex-start;flex-shrink:0}
+.cta,.primary,.menu button.active,.menu button:hover,.mobile-nav button.active{background:linear-gradient(110deg,var(--accent),var(--accent2));box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 18%,transparent)}
+.season-scene{position:relative;width:min(100%,300px);height:205px;flex-shrink:0;align-self:center;margin:24px 0 6px;isolation:isolate;pointer-events:none}
+.orb-spin{position:absolute;inset:0;transform-origin:50% 50%}
+.orb{width:164px;height:164px;left:calc(50% - 82px);top:22px;right:auto;bottom:auto;opacity:1;background:radial-gradient(circle at 32% 26%,#fff 0 3%,var(--orb-light) 23%,var(--orb-mid) 52%,var(--orb-deep) 82%,var(--orb-mid) 100%);box-shadow:inset -10px -14px 24px #23315c15;filter:drop-shadow(0 16px 20px #23315c18)}
+.orbit{width:235px;height:78px;left:calc(50% - 117.5px);top:70px;right:auto;bottom:auto;border-color:var(--season-ink);opacity:.32;transform:rotate(-24deg)}
+.orbit.second{width:195px;height:70px;left:calc(50% - 97.5px);top:73px;transform:rotate(56deg);opacity:.16}
+.season-particle{position:absolute;color:var(--season-ink);opacity:.52;font-family:Georgia,serif;line-height:1;animation:season-drift 6s ease-in-out infinite alternate;will-change:transform}
+.season-particle:nth-child(1){left:8%;top:20%;font-size:32px;animation-delay:-2s}
+.season-particle:nth-child(2){right:8%;top:15%;font-size:23px;animation-delay:-4s}
+.season-particle:nth-child(3){left:15%;bottom:15%;font-size:21px;animation-delay:-1s}
+.season-particle:nth-child(4){right:10%;bottom:15%;font-size:29px;animation-delay:-3s}
+.science-symbol{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;font:italic 24px Georgia,serif;text-shadow:0 1px 10px #23315c20;opacity:.85;white-space:nowrap}
+.science-note{display:flex;flex-direction:column;gap:5px;min-height:106px;color:#526078;font-size:13px;line-height:1.45;margin-top:auto;overflow-wrap:anywhere}
+.science-note time{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
+.science-note a{color:inherit;text-decoration:none}.science-note a:hover{text-decoration:underline}.science-note .source-label{font-size:11px;color:#6b7487}
+@keyframes season-drift{to{transform:translate3d(5px,-10px,0) rotate(14deg)}}
+.weekdays,.week{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important}
+.week{height:144px;grid-template-rows:minmax(0,1fr)}
+.weekday{font-size:12px;color:#58637b;padding:12px 0;background:var(--soft2)}
+.day,.day.muted{display:flex!important;flex-direction:column;min-width:0;min-height:0;height:100%;padding:7px;overflow:hidden;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff}
+.day.muted{background:#f8f9fc;color:#9ba4b5;cursor:default}
+.day:nth-child(7){border-right:0}.week:last-child .day{border-bottom:0}
+.day:not(.muted):hover{background:color-mix(in srgb,var(--soft) 35%,white)}
+.day:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.date{display:block;align-self:flex-start;flex-shrink:0;font-size:12px;line-height:22px;min-width:22px;height:22px;text-align:center;margin:0}
+.day.today .date{background:var(--accent);padding:0}
+.booking{flex-shrink:0;min-width:0;max-width:100%;margin-top:4px;padding:4px 5px;border-radius:6px;font-size:11px;line-height:14px;color:var(--ink);background:linear-gradient(110deg,var(--soft),var(--soft2));border:0;overflow:hidden}
+.booking-time,.booking-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.booking-time{font-size:11px;font-variant-numeric:tabular-nums}.booking-end::before{content:'–'}
+.booking-count{font-size:11px;font-weight:700;color:var(--accent);line-height:16px;margin-top:3px;white-space:nowrap}
+.calendar-card{align-self:start}.cal-head{gap:8px;min-height:44px}.monthnav{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:8px;min-width:0;width:100%;font-size:20px}.monthnav .icon{width:44px;height:44px}.monthnav #monthTitle{text-align:center;overflow-wrap:anywhere}.cal-head>div:last-child{display:none}
+.calendar-hint{font-size:12px;color:#65718a;margin:10px 2px 0;line-height:1.5;min-height:36px}
+.calendar-status{min-height:26px;font-size:12px;line-height:20px;color:#65718a;margin:4px 2px 0}.calendar-status button{font:inherit;color:var(--accent);border:0;background:transparent;text-decoration:underline;cursor:pointer}
+.day-entry{padding:13px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.day-entry strong,.day-entry span{display:block}.day-entry strong{color:var(--accent);margin-bottom:4px}.day-entry p{margin:6px 0;font-size:14px;line-height:1.5}.day-entry .person{font-weight:700}.day-empty{color:#65718a}
+#dayDialog .modal-actions{position:sticky;bottom:0;background:#fff;padding:14px 0;margin:0}.close{min-width:44px;min-height:44px}.modal-head strong{min-width:0}.modal-body{overflow-wrap:anywhere}
+@media(min-width:1101px) and (max-width:1360px){.shell{grid-template-columns:190px minmax(0,1fr)}.main{padding:20px}.hero{padding:22px}.logo{font-size:40px}.raman{font-size:66px}.hero-grid{gap:16px}}
+@media(max-width:1100px) and (min-width:761px){.hero-grid{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:16px}.main{padding:20px}.hero{padding:22px}.raman{font-size:70px}.device-name{font-size:20px}.calendar-card{padding:12px}.booking-name{display:none}.booking-end{display:block}.booking-end::before{content:''}}
+@media(max-width:760px){
+ .main{padding:12px 10px calc(96px + env(safe-area-inset-bottom))}.hero-grid{display:block}.hero{padding:22px 20px 16px}.hero .raman{font-size:68px;letter-spacing:-3px}.raman em{font-size:21px}.kicker{font-size:11px}.device-name{font-size:21px;margin-top:24px}.device-sub{font-size:14px;max-width:none}.cta{font-size:14px;min-height:44px}.season-scene{height:180px;margin:16px 0 4px;width:min(100%,280px)}.orb{height:144px;width:144px;left:calc(50% - 72px);top:16px}.orbit{top:51px}.orbit.second{top:53px}.science-note{min-height:106px;font-size:13px;width:100%}.science-symbol{top:49%}
+ .calendar-card{padding:9px}.monthnav{font-size:17px;gap:4px}.week{height:116px}.day,.day.muted{padding:3px}.weekday{font-size:11px;padding:9px 0}.date{font-size:12px;line-height:22px;margin:0}.day.today .date{padding:0}.booking{padding:3px 1px;margin-top:3px;line-height:12px}.booking b,.booking-time{font-size:10px;line-height:12px}.booking-name{display:none}.booking-end{display:block}.booking-end::before{content:''}.booking-count{font-size:10px;line-height:13px;margin-top:3px}.calendar-hint{font-size:12px}.calendar-status{font-size:12px}.topbar{background:color-mix(in srgb,var(--soft2) 70%,white)}.mobile-nav{bottom:calc(10px + env(safe-area-inset-bottom))}.mobile-nav button{font-size:11px}.mobile-nav button:nth-child(2){font-size:10px}dialog{max-height:88dvh}
+}
+@media(prefers-reduced-motion:reduce){.season-particle{animation:none}.success-toast{transition:none}html{scroll-behavior:auto}}
+
 </style>
 </head>
 <body>
@@ -262,15 +319,16 @@ body.records-view .hero-grid{display:none}
         <div class="device-name">Запись на Confotec NR500</div>
         <div class="device-sub">Выбери дату и время, оставь данные — запись сразу появится в общем календаре.</div>
         <button class="cta" id="heroNew">✦ Новая запись</button>
-        <div class="orb"></div><div class="orbit"></div>
+        <div class="season-scene" aria-hidden="true"><div class="orb-spin"><div class="orb"></div><div class="orbit"></div><div class="orbit second"></div></div><div id="seasonParticles"></div><div class="science-symbol" id="scienceSymbol"></div></div>
+        <div class="science-note"><time id="scienceDate"></time><a id="scienceLink" target="_blank" rel="noopener noreferrer"></a><span class="source-label" id="scienceSource"></span></div>
       </div>
 
       <div class="calendar-card">
         <div class="cal-head">
           <div class="monthnav">
-            <button class="icon" id="prev">‹</button>
-            <span id="monthTitle"></span>
-            <button class="icon" id="next">›</button>
+            <button class="icon" id="prev" aria-label="Предыдущий месяц">‹</button>
+            <span id="monthTitle" aria-live="polite"></span>
+            <button class="icon" id="next" aria-label="Следующий месяц">›</button>
           </div>
           <div style="font-size:12px;color:var(--muted);font-weight:700">общий календарь</div>
         </div>
@@ -281,6 +339,8 @@ body.records-view .hero-grid{display:none}
           </div>
           <div id="calendarBody"></div>
         </div>
+        <p class="calendar-hint">Нажми на день, чтобы увидеть все записи или выбрать свободное время.</p>
+        <div class="calendar-status" id="calendarStatus" role="status" aria-live="polite"></div>
       </div>
     </section>
 
@@ -311,6 +371,10 @@ body.records-view .hero-grid{display:none}
   </form>
 </dialog>
 
+<dialog id="dayDialog" aria-labelledby="dayTitle">
+ <div class="modal-head"><strong id="dayTitle"></strong><button type="button" class="close" id="dayClose" aria-label="Закрыть">×</button></div>
+ <div class="modal-body"><div id="dayEntries"></div><div class="modal-actions"><button type="button" class="primary" id="dayNew">Новая запись</button></div></div>
+</dialog>
 <script>
 
 const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
@@ -319,6 +383,51 @@ current=new Date(current.getFullYear(),current.getMonth(),1);
 let monthBookings=[];
 let adminPassword=sessionStorage.getItem('adminPassword')||'';
 let toastTimer=null;
+
+const MONTH_THEMES=[
+ {colors:['#46699f','#625393','#e4eefb','#ebe7f8','#d7e8ff','#9fb9e5','#8076b6','#6384ad'],particles:['❄','✧','❅','✧'],symbol:'◌ · ◌',date:'Январь 1610',fact:'Галилей наблюдает спутники Юпитера.',source:'NASA',url:'https://www.nasa.gov/general/415-years-ago-astronomer-galileo-discovers-jupiters-moons/'},
+ {colors:['#655299','#795c9e','#ece6f8','#f1e8f5','#e7dcff','#b6a3de','#8874b6','#8c75b0'],particles:['❅','✧','❄','⋆'],symbol:'ν → ν′',date:'Февраль 1928',fact:'Открыто рамановское рассеяние света.',source:'APS',url:'https://www.aps.org/apsnews/2009/02/this-month-in-physics-history'},
+ {colors:['#26776f','#427b89','#e0f2ed','#e4f2f4','#d6f7f0','#98cfc6','#69a2ad','#559c92'],particles:['❧','✧','❀','❧'],symbol:'hν',date:'Март 1905',fact:'Эйнштейн объясняет фотоэффект с помощью квантов света.',source:'APS',url:'https://physics.aps.org/articles/v18/15'},
+ {colors:['#33786c','#477b5d','#e1f2e8','#e5f4ef','#ddfae9','#a3d5be','#70aa99','#639e7b'],particles:['❧','❀','❧','✿'],symbol:'ДНК',date:'25 апреля 1953',fact:'В Nature опубликована модель двойной спирали ДНК.',source:'Nature',url:'https://www.nature.com/articles/171737a0'},
+ {colors:['#287668','#4e7b5c','#dff3e9','#edf5e6','#e0ffeb','#9edabd','#6aafa0','#69a089'],particles:['❀','✿','❁','❀'],symbol:'hν →',date:'16 мая 1960',fact:'Теодор Мейман запускает первый работающий лазер.',source:'APS',url:'https://www.aps.org/apsnews/2010/05/physics-history'},
+ {colors:['#487637','#667c37','#e8f5dc','#f1f6dc','#efffd9','#bcde99','#86b36f','#8aa66a'],particles:['❧','☼','✿','❧'],symbol:'≈ 0 K',date:'5 июня 1995',fact:'Получен конденсат Бозе — Эйнштейна в разреженном газе атомов.',source:'APS',url:'https://www.aps.org/apsnews/2004/06/june-5-1995-first-bose-einstein-condensate'},
+ {colors:['#77702e','#62803c','#f5f4d9','#eaf5db','#fffbd6','#ddd58f','#a2b96c','#b1a365'],particles:['☼','✧','❧','☼'],symbol:'☾',date:'20 июля 1969',fact:'Лунный модуль «Аполлона-11» совершает посадку на Луне.',source:'NASA',url:'https://www.nasa.gov/history/july-20-1969-one-giant-leap-for-mankind/'},
+ {colors:['#87702f','#7c8041','#f8efd7','#f3f3dd','#fff0ce','#e3cd93','#b6b476','#b59b60'],particles:['❧','☼','✧','❧'],symbol:'ψ',date:'12 августа 1887',fact:'Родился Эрвин Шрёдингер — один из создателей квантовой механики.',source:'Nobel Prize',url:'https://www.nobelprize.org/prizes/physics/1933/schrodinger/facts/'},
+ {colors:['#98603a','#997048','#faebdd','#f7eedf','#ffe9d0','#e8bd94','#c69e7a','#b68c6a'],particles:['❧','❦','✧','❧'],symbol:'∿ ∿',date:'14 сентября 2015',fact:'LIGO впервые регистрирует гравитационные волны.',source:'LIGO / Caltech',url:'https://www.ligo.caltech.edu/detection'},
+ {colors:['#a35440','#99524e','#fbe6db','#f6e3df','#ffe4d0','#e9ac8e','#c9837c','#b77d65'],particles:['❦','❧','❧','❦'],symbol:'✧ ·',date:'4 октября 1957',fact:'Запущен первый искусственный спутник Земли.',source:'NASA',url:'https://www.nasa.gov/history/65-years-ago-sputnik-ushers-in-the-space-age/'},
+ {colors:['#944b49','#88534d','#f4e2dd','#f2e5df','#f8ddd3','#d8aaa0','#b58278','#b17d70'],particles:['❧','❦','✧','❧'],symbol:'Ra',date:'7 ноября 1867',fact:'Родилась Мария Склодовская-Кюри, исследовательница радиоактивности.',source:'Nobel Prize',url:'https://www.nobelprize.org/prizes/physics/1903/marie-curie/biographical/'},
+ {colors:['#545e9d','#6d539a','#e5eafb','#eee5f7','#dde6ff','#a7b2e6','#927cbd','#8489bc'],particles:['❄','✧','❅','⋆'],symbol:'E = hν',date:'14 декабря 1900',fact:'Макс Планк представляет вывод закона излучения с квантами энергии.',source:'APS',url:'https://www.aps.org/apsnews/2002/10/this-month-in-physics-history'}
+];
+let orbAnimation=null;
+function applyMonthTheme(direction=0){
+ const t=MONTH_THEMES[current.getMonth()];
+ ['accent','accent2','soft','soft2','orb-light','orb-mid','orb-deep','season-ink'].forEach((name,i)=>document.documentElement.style.setProperty('--'+name,t.colors[i]));
+ document.documentElement.style.setProperty('--season-line',t.colors[2]);
+ document.getElementById('seasonParticles').innerHTML=t.particles.map(c=>`<span class="season-particle">${c}</span>`).join('');
+ document.getElementById('scienceSymbol').textContent=t.symbol;
+ document.getElementById('scienceDate').textContent=t.date;
+ const link=document.getElementById('scienceLink');link.textContent=t.fact;link.href=t.url;
+ document.getElementById('scienceSource').textContent='Источник: '+t.source;
+ if(orbAnimation)orbAnimation.cancel();
+ if(direction && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+  orbAnimation=document.querySelector('.orb-spin').animate([
+   {transform:'rotate(0deg) scale(1)'},{transform:`rotate(${direction*180}deg) scale(.94)`,offset:.5},{transform:`rotate(${direction*360}deg) scale(1)`}
+  ],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'});
+ }
+}
+let monthRequest=0,monthReady=false;
+let selectedDay='';
+const dayDialog=document.getElementById('dayDialog');
+function openDay(ds){
+ selectedDay=ds;
+ const entries=monthBookings.filter(b=>b.booking_date===ds);
+ document.getElementById('dayTitle').textContent=new Date(ds+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+ document.getElementById('dayEntries').innerHTML=entries.map(b=>`<article class="day-entry"><strong>${esc(b.start_time)}–${esc(b.end_time)}</strong><span class="person">${esc(b.full_name)}</span>${b.department?`<p>${esc(b.department)}</p>`:''}${b.sample_info?`<p>Образцы: ${esc(b.sample_info)}</p>`:''}${b.comment?`<p>${esc(b.comment)}</p>`:''}</article>`).join('')||'<p class="day-empty">На этот день записей пока нет.</p>';
+ dayDialog.showModal();
+}
+document.getElementById('dayClose').addEventListener('click',()=>dayDialog.close());
+document.getElementById('dayNew').addEventListener('click',()=>{dayDialog.close();openDialog(selectedDay)});
+
 
 const body=document.getElementById('calendarBody');
 const title=document.getElementById('monthTitle');
@@ -383,10 +492,24 @@ async function fetchJson(url,options){
 }
 
 async function loadMonthBookings(){
-  const y=current.getFullYear();
-  const m=current.getMonth()+1;
-  monthBookings=await fetchJson(`/api/bookings?year=${y}&month=${m}`);
-  renderCalendar();
+  const request=++monthRequest;
+  const y=current.getFullYear(),m=current.getMonth()+1;
+  monthReady=false;monthBookings=[];renderCalendar();
+  const status=document.getElementById('calendarStatus');
+  body.setAttribute('aria-busy','true');status.textContent='Загружаю записи…';
+  try{
+    const data=await fetchJson(`/api/bookings?year=${y}&month=${m}`);
+    if(request!==monthRequest)return;
+    monthBookings=data;monthReady=true;renderCalendar();status.textContent='';
+  }catch(err){
+    if(request!==monthRequest)return;
+    status.textContent='Не удалось загрузить записи. ';
+    const retry=document.createElement('button');retry.textContent='Повторить';retry.type='button';retry.onclick=()=>loadMonthBookings();status.appendChild(retry);
+  }finally{if(request===monthRequest)body.setAttribute('aria-busy','false')}
+}
+function changeMonth(direction){
+ current=new Date(current.getFullYear(),current.getMonth()+direction,1);
+ applyMonthTheme(direction);loadMonthBookings();
 }
 
 function renderCalendar(){
@@ -398,7 +521,7 @@ function renderCalendar(){
   const days=new Date(y,m+1,0).getDate();
   const prevDays=new Date(y,m,0).getDate();
   const start=(first.getDay()+6)%7;
-  const cells=Math.ceil((start+days)/7)*7;
+  const cells=42; // Six fixed weeks: switching months never changes the card height.
   const now=new Date();
   const today=iso(now.getFullYear(),now.getMonth(),now.getDate());
 
@@ -429,17 +552,20 @@ function renderCalendar(){
       day.className='day'+(muted?' muted':'')+(ds===today?' today':'');
       day.innerHTML=`<div class="date">${dn}</div>`;
 
-      monthBookings
-        .filter(b=>b.booking_date===ds)
-        .forEach(b=>{
-          const el=document.createElement('div');
-          el.className='booking';
-          el.innerHTML=`<b>${esc(b.start_time)}–${esc(b.end_time)}</b><br>${esc(b.full_name)}`;
-          day.appendChild(el);
-        });
-
+      const entries=monthBookings.filter(b=>b.booking_date===ds);
+      entries.slice(0,2).forEach(b=>{
+        const el=document.createElement('div');el.className='booking';
+        el.innerHTML=`<b class="booking-time"><span>${esc(b.start_time)}</span><span class="booking-end">${esc(b.end_time)}</span></b><span class="booking-name">${esc(b.full_name)}</span>`;
+        day.appendChild(el);
+      });
+      if(entries.length>2){const count=document.createElement('div');count.className='booking-count';count.textContent=`+${entries.length-2} ещё`;day.appendChild(count)}
       if(!muted){
-        day.addEventListener('click',()=>openDialog(ds));
+        day.tabIndex=0;day.setAttribute('role','button');
+        day.setAttribute('aria-label',`${dn} ${MONTHS[m]}, ${y}. ${monthReady?`Записей: ${entries.length}`:'Записи загружаются'}`);
+        day.setAttribute('aria-disabled',String(!monthReady));
+        const activate=()=>{if(monthReady){if(entries.length)openDay(ds);else openDialog(ds)}};
+        day.addEventListener('click',activate);
+        day.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});
       }
       week.appendChild(day);
     }
@@ -576,14 +702,8 @@ document.getElementById('form').addEventListener('submit',async e=>{
   showSuccessToast();
 });
 
-document.getElementById('prev').addEventListener('click',async()=>{
-  current=new Date(current.getFullYear(),current.getMonth()-1,1);
-  await loadMonthBookings();
-});
-document.getElementById('next').addEventListener('click',async()=>{
-  current=new Date(current.getFullYear(),current.getMonth()+1,1);
-  await loadMonthBookings();
-});
+document.getElementById('prev').addEventListener('click',()=>changeMonth(-1));
+document.getElementById('next').addEventListener('click',()=>changeMonth(1));
 
 ['newBooking','sideNew','heroNew'].forEach(id=>{
   const el=document.getElementById(id);
@@ -602,9 +722,8 @@ setAdminUi();
 setActiveSection('calendar');
 const initialMobileAdmin=document.getElementById('mobileAdmin');
 if(initialMobileAdmin && adminPassword) initialMobileAdmin.classList.add('active');
-loadMonthBookings().catch(err=>{
-  body.innerHTML=`<div style="padding:18px;color:#b42318">${esc(err.message)}</div>`;
-});
+applyMonthTheme();
+loadMonthBookings();
 
 </script>
 
