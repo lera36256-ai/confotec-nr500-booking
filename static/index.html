@@ -407,6 +407,9 @@ button.booking:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .booking-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .booking-actions button{flex:1 1 130px;min-height:48px;touch-action:manipulation}
 @media(max-width:600px){.booking-actions{position:sticky;bottom:0;background:white;padding:10px 0}.booking-actions button{font-size:14px}}
+#form .field-missing{background:#fff0f5;border-color:#e6a4bc;box-shadow:0 0 0 3px #f9dce7}
+#form .field-missing:focus{outline:2px solid #d98fab;outline-offset:2px}
+#form .error{background:#fff0f5;border-color:#efc1d2;color:#92445e}
 </style>
 </head>
 <body>
@@ -483,11 +486,11 @@ button.booking:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 
 <dialog id="dlg">
   <div class="modal-head"><strong id="formTitle">Новая запись</strong><button class="close" id="x">×</button></div>
-  <form id="form" class="modal-body">
-    <div class="error" id="err"></div>
-    <div class="field"><label>ФИО *</label><input id="full_name" required placeholder="Иванов Иван Иванович"></div>
+  <form id="form" class="modal-body" novalidate>
+    <div class="error" id="err" role="alert" aria-live="polite"></div>
+    <div class="field"><label for="full_name">ФИО *</label><input id="full_name" minlength="2" maxlength="200" required placeholder="Иванов Иван Иванович"></div>
     <div class="grid2">
-      <div class="field"><label>Подразделение / лаборатория</label><input id="department" placeholder="Наименование подразделения"></div>
+      <div class="field"><label for="department">Подразделение / лаборатория *</label><input id="department" required maxlength="200" placeholder="Наименование подразделения"></div>
       <div class="field"><label>Контакт</label><input id="contact" placeholder="E-mail или телефон"></div>
     </div>
     <div class="field"><label>Дата *</label><input id="booking_date" type="date" required></div>
@@ -822,6 +825,7 @@ window.showRecordsView=async function showRecordsView(){
 
 window.openDialog=function openDialog(d){
   editingId=null;
+  document.querySelectorAll('#form .field-missing').forEach(el=>{el.classList.remove('field-missing');el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});
   document.getElementById('form').reset();
   document.getElementById('formTitle').textContent='Новая запись';
   document.querySelector('#form button[type="submit"]').textContent='Записаться';
@@ -869,8 +873,27 @@ window.deleteBooking=async function(id){
 };
 function openDayAfterDelete(){dayDialog.close();openDay(selectedDay);}
 
-document.getElementById('form').addEventListener('submit',async e=>{
+document.querySelectorAll('#form [required]').forEach(el=>el.addEventListener('input',()=>{
+ if(el.value.trim() && el.checkValidity()){
+  el.classList.remove('field-missing');el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');
+  if(!document.querySelector('#form .field-missing'))document.getElementById('err').style.display='none';
+ }
+}));
+document.getElementById('form').addEventListener('submit' ,async e=>{
  e.preventDefault();
+ const form=e.currentTarget;
+ const invalid=[...form.querySelectorAll('[required]')].filter(el=>!el.value.trim() || !el.checkValidity());
+ form.querySelectorAll('[required]').forEach(el=>{
+  const missing=invalid.includes(el);
+  el.classList.toggle('field-missing',missing);
+  if(missing){el.setAttribute('aria-invalid','true');el.setAttribute('aria-describedby','err');}
+  else{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');}
+ });
+ if(invalid.length){
+  const err=document.getElementById('err');
+  err.textContent='Заполните поля со * 🥺';err.style.display='block';
+  invalid[0].focus();return;
+ }
  const button=document.querySelector('#form button[type="submit"]');
  if(button.disabled)return;
  button.disabled=true;
