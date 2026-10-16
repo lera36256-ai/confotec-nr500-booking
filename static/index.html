@@ -633,10 +633,10 @@ const SUCCESS_MESSAGES=[
   "🌠 Удачных измерений и хороших пиков 🌠"
 ];
 
-function showSuccessToast(){
+function showSuccessToast(message){
   const toast=document.getElementById('successToast');
   if(!toast)return;
-  toast.textContent=SUCCESS_MESSAGES[Math.floor(Math.random()*SUCCESS_MESSAGES.length)];
+  toast.textContent=message||SUCCESS_MESSAGES[Math.floor(Math.random()*SUCCESS_MESSAGES.length)];
   toast.classList.add('show');
   if(toastTimer)clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>toast.classList.remove('show'),3200);
@@ -863,6 +863,7 @@ window.deleteBooking=async function(id){
   await loadMonthBookings();
   if(dayDialog.open)openDayAfterDelete();
   if(document.body.classList.contains('records-view'))await renderAllBookings(true);
+  showSuccessToast('Запись удалена 🐾');
  }catch(err){alert(err.message);}
  finally{deletingBookings.delete(id);}
 };
@@ -886,8 +887,7 @@ document.getElementById('form').addEventListener('submit',async e=>{
   const [y,m]=data.booking_date.split('-').map(Number);current=new Date(y,m-1,1);applyMonthTheme();
   await loadMonthBookings();
   if(document.body.classList.contains('records-view'))await renderAllBookings();
-  showSuccessToast();
-  document.getElementById('successToast').textContent=id?'Изменения сохранены 🐾':'Запись сохранена 🐾 Изменить или удалить её можно в этом браузере.';
+  showSuccessToast(id?'Изменения сохранены 🐾':undefined);
  }catch(error){err.textContent=error.message;err.style.display='block';}
  finally{button.disabled=false;}
 });
