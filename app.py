@@ -142,12 +142,16 @@ def create_booking(payload: BookingIn):
         return {**serialize(booking), "edit_token": token}
 
 @app.delete("/api/bookings/{booking_id}")
-def delete_booking(booking_id: int, x_admin_password: Optional[str] = Header(default=None)):
-    verify_admin(x_admin_password)
+def delete_booking(booking_id: int, x_admin_password: Optional[str] = Header(default=None),
+                   x_edit_token: Optional[str] = Header(default=None)):
     with SessionLocal() as db:
+        verify_editor(db, booking_id, x_edit_token, x_admin_password)
         booking = db.get(Booking, booking_id)
         if not booking:
             raise HTTPException(status_code=404, detail="Запись не найдена")
+        access = db.get(BookingAccess, booking_id)
+        if access:
+            db.delete(access)
         db.delete(booking)
         db.commit()
     return {"ok": True}
