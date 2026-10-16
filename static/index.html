@@ -401,6 +401,12 @@ body{overflow-x:visible}
  .calendar-card .day,.calendar-card .day.muted{padding:3px}
 }
 
+/* Touch targets for booking details without changing the calendar grid. */
+button.booking{display:block;width:100%;text-align:left;font-family:inherit;cursor:pointer;touch-action:manipulation;min-height:44px}
+button.booking:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.booking-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.booking-actions button{flex:1 1 130px;min-height:48px;touch-action:manipulation}
+@media(max-width:600px){.booking-actions{position:sticky;bottom:0;background:white;padding:10px 0}.booking-actions button{font-size:14px}}
 </style>
 </head>
 <body>
@@ -599,11 +605,11 @@ function bookingCat(booking={}){
 let monthRequest=0,monthReady=false;
 let selectedDay='';
 const dayDialog=document.getElementById('dayDialog');
-function openDay(ds){
+function openDay(ds,bookingId=null){
  selectedDay=ds;
- const entries=monthBookings.filter(b=>b.booking_date===ds);
+ const entries=monthBookings.filter(b=>b.booking_date===ds && (bookingId===null || b.id===bookingId));
  document.getElementById('dayTitle').textContent=new Date(ds+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
- document.getElementById('dayEntries').innerHTML=entries.map(b=>`<article class="day-entry"><strong>${esc(b.start_time)}–${esc(b.end_time)}</strong><span class="person">${esc(b.full_name)}</span>${bookingCat(b)}${b.department?`<p>${esc(b.department)}</p>`:''}${b.sample_info?`<p>Образцы: ${esc(b.sample_info)}</p>`:''}${b.comment?`<p>${esc(b.comment)}</p>`:''}${editButton(b)}</article>`).join('')||'<p class="day-empty">На этот день записей пока нет.</p>';
+ document.getElementById('dayEntries').innerHTML=entries.map(b=>`<article class="day-entry"><strong>${esc(b.start_time)}–${esc(b.end_time)}</strong><span class="person">${esc(b.full_name)}</span>${bookingCat(b)}${b.department?`<p>${esc(b.department)}</p>`:''}${b.sample_info?`<p>Образцы: ${esc(b.sample_info)}</p>`:''}${b.comment?`<p>${esc(b.comment)}</p>`:''}<div class="booking-actions">${editButton(b)||'<p class="day-empty">Изменить или удалить запись можно в браузере, где она создана. Для старых записей обратитесь к администратору.</p>'}</div></article>`).join('')||'<p class="day-empty">На этот день записей пока нет.</p>';
  const holiday=holidayFor(ds);
  if(holiday)document.getElementById('dayEntries').innerHTML=`<p class="holiday-note">✦ ${esc(holiday)}</p>`+document.getElementById('dayEntries').innerHTML;
  dayDialog.showModal();
@@ -739,7 +745,10 @@ function renderCalendar(){
 
       const entries=monthBookings.filter(b=>b.booking_date===ds);
       entries.slice(0,2).forEach(b=>{
-        const el=document.createElement('div');el.className='booking';
+        const el=document.createElement('button');el.type='button';el.className='booking';
+        el.setAttribute('aria-label',`Открыть запись: ${b.full_name}, ${b.start_time}–${b.end_time}`);
+        el.addEventListener('click',e=>{e.stopPropagation();if(monthReady)openDay(ds,b.id)});
+        el.addEventListener('keydown',e=>e.stopPropagation());
         el.innerHTML=`<b class="booking-time"><span>${esc(b.start_time)}</span><span class="booking-end">${esc(b.end_time)}</span></b><span class="booking-name">${esc(b.full_name)}</span>${bookingCat(b)}`;
         day.appendChild(el);
       });
