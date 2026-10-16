@@ -56,6 +56,10 @@ class BookingIn(BaseModel):
     sample_info: str = Field(default="", max_length=1000)
     comment: str = Field(default="", max_length=2000)
 
+def validate_required_fields(payload: BookingIn):
+    if len(payload.full_name.strip()) < 2 or not payload.department.strip():
+        raise HTTPException(status_code=400, detail="Заполните поля со * 🥺: ФИО и подразделение")
+
 def parse_time(value: str) -> time:
     try:
         return datetime.strptime(value, "%H:%M").time()
@@ -105,6 +109,7 @@ def list_bookings(year: Optional[int] = None, month: Optional[int] = None):
 
 @app.post("/api/bookings")
 def create_booking(payload: BookingIn):
+    validate_required_fields(payload)
     start = parse_time(payload.start_time)
     end = parse_time(payload.end_time)
     if end <= start:
@@ -185,6 +190,7 @@ def update_booking(booking_id: int, payload: BookingIn,
         booking = db.get(Booking, booking_id)
         if not booking:
             raise HTTPException(status_code=404, detail="Запись не найдена")
+        validate_required_fields(payload)
         start, end = parse_time(payload.start_time), parse_time(payload.end_time)
         if end <= start:
             raise HTTPException(status_code=400, detail="Время окончания должно быть позже времени начала")
