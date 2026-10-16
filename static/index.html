@@ -476,7 +476,7 @@ body{overflow-x:visible}
 </div>
 
 <dialog id="dlg">
-  <div class="modal-head"><strong>Новая запись</strong><button class="close" id="x">×</button></div>
+  <div class="modal-head"><strong id="formTitle">Новая запись</strong><button class="close" id="x">×</button></div>
   <form id="form" class="modal-body">
     <div class="error" id="err"></div>
     <div class="field"><label>ФИО *</label><input id="full_name" required placeholder="Иванов Иван Иванович"></div>
@@ -495,6 +495,12 @@ body{overflow-x:visible}
   </form>
 </dialog>
 
+<dialog id="accessDialog">
+ <div class="modal-head"><strong>Запись сохранена 🐾</strong><button class="close" type="button" onclick="document.getElementById('accessDialog').close()" aria-label="Закрыть">×</button></div>
+ <div class="modal-body"><p>Сохраните личную ссылку: по ней можно изменить эту запись с любого устройства. Не передавайте её другим.</p>
+ <div class="field"><label for="editLink">Ссылка для редактирования</label><input id="editLink" readonly onclick="this.select()"></div>
+ <button type="button" class="primary" id="copyEditLink">Скопировать ссылку</button><p id="copyStatus" role="status"></p></div>
+</dialog>
 <dialog id="dayDialog" aria-labelledby="dayTitle">
  <div class="modal-head"><strong id="dayTitle"></strong><button type="button" class="close" id="dayClose" aria-label="Закрыть">×</button></div>
  <div class="modal-body"><div id="dayEntries"></div><div class="modal-actions"><button type="button" class="primary" id="dayNew">Новая запись</button></div></div>
@@ -507,6 +513,42 @@ current=new Date(current.getFullYear(),current.getMonth(),1);
 let monthBookings=[];
 let adminPassword=sessionStorage.getItem('adminPassword')||'';
 let toastTimer=null;
+let editingId=null;
+let editKeys={};
+try{editKeys=JSON.parse(localStorage.getItem('bookingEditKeys')||'{}')||{};}catch(_){}
+function saveEditKey(id,token){
+ editKeys[id]=token;
+ try{localStorage.setItem('bookingEditKeys',JSON.stringify(editKeys));}catch(_){}
+}
+function editorHeaders(id){
+ return {'X-Edit-Token':editKeys[id]||'', 'X-Admin-Password':adminPassword};
+}
+function editButton(b){
+ return editKeys[b.id]||adminPassword?`<button type="button" class="secondary" style="min-height:44px" onclick="editBooking(${b.id})">Редактировать</button>`:'';
+}
+function showEditLink(id){
+ const link=new URL(location.pathname,location.origin);
+ link.hash=new URLSearchParams({edit:String(id),key:editKeys[id]}).toString();
+ document.getElementById('editLink').value=link.href;
+ document.getElementById('copyStatus').textContent='';
+ document.getElementById('accessDialog').showModal();
+}
+document.getElementById('copyEditLink').addEventListener('click',async()=>{
+ const input=document.getElementById('editLink');
+ try{await navigator.clipboard.writeText(input.value);document.getElementById('copyStatus').textContent='Ссылка скопирована';}
+ catch(_){input.focus();input.select();document.getElementById('copyStatus').textContent='Скопируйте выделенную ссылку вручную';}
+});
+window.editBooking=async function(id){
+ try{
+  const b=await fetchJson(`/api/bookings/${id}/edit`,{headers:editorHeaders(id)});
+  dayDialog.close();
+  openDialog(b.booking_date);
+  editingId=id;
+  document.getElementById('formTitle').textContent='Редактирование записи';
+  document.querySelector('#form button[type="submit"]').textContent='Сохранить изменения';
+  for(const field of ['full_name','department','contact','booking_date','start_time','end_time','sample_info','comment'])document.getElementById(field).value=b[field]||'';
+ }catch(err){alert(err.message);}
+};
 
 const MONTH_THEMES=[
  {colors:['#46699f','#625393','#e4eefb','#ebe7f8','#d7e8ff','#9fb9e5','#8076b6','#6384ad'],particles:['❄','✧','❅','✧'],symbol:'◌ · ◌',date:'Январь 1610',fact:'Галилей наблюдает спутники Юпитера.',source:'NASA',url:'https://www.nasa.gov/general/415-years-ago-astronomer-galileo-discovers-jupiters-moons/'},
@@ -579,7 +621,7 @@ function openDay(ds){
  selectedDay=ds;
  const entries=monthBookings.filter(b=>b.booking_date===ds);
  document.getElementById('dayTitle').textContent=new Date(ds+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
- document.getElementById('dayEntries').innerHTML=entries.map(b=>`<article class="day-entry"><strong>${esc(b.start_time)}–${esc(b.end_time)}</strong><span class="person">${esc(b.full_name)}</span>${bookingCat(b)}${b.department?`<p>${esc(b.department)}</p>`:''}${b.sample_info?`<p>Образцы: ${esc(b.sample_info)}</p>`:''}${b.comment?`<p>${esc(b.comment)}</p>`:''}</article>`).join('')||'<p class="day-empty">На этот день записей пока нет.</p>';
+ document.getElementById('dayEntries').innerHTML=entries.map(b=>`<article class="day-entry"><strong>${esc(b.start_time)}–${esc(b.end_time)}</strong><span class="person">${esc(b.full_name)}</span>${bookingCat(b)}${b.department?`<p>${esc(b.department)}</p>`:''}${b.sample_info?`<p>Образцы: ${esc(b.sample_info)}</p>`:''}${b.comment?`<p>${esc(b.comment)}</p>`:''}${editButton(b)}</article>`).join('')||'<p class="day-empty">На этот день записей пока нет.</p>';
  const holiday=holidayFor(ds);
  if(holiday)document.getElementById('dayEntries').innerHTML=`<p class="holiday-note">✦ ${esc(holiday)}</p>`+document.getElementById('dayEntries').innerHTML;
  dayDialog.showModal();
@@ -754,7 +796,7 @@ async function renderAllBookings(){
         ${all.map(b=>`<tr>
           <td>${esc(b.booking_date.split('-').reverse().join('.'))}</td>
           <td>${esc(b.start_time)}–${esc(b.end_time)}</td>
-          <td>${esc(b.full_name)}${bookingCat(b)}</td>
+          <td>${esc(b.full_name)}${bookingCat(b)}${editButton(b)}</td>
           <td>${esc(b.department)||'—'}</td>
           <td>${esc(b.sample_info)||'—'}</td>
           <td>${esc(b.comment)||'—'}</td>
@@ -783,6 +825,10 @@ window.showRecordsView=async function showRecordsView(){
 };
 
 window.openDialog=function openDialog(d){
+  editingId=null;
+  document.getElementById('form').reset();
+  document.getElementById('formTitle').textContent='Новая запись';
+  document.querySelector('#form button[type="submit"]').textContent='Записаться';
   document.getElementById('err').style.display='none';
   document.getElementById('booking_date').value=d||new Date().toISOString().slice(0,10);
   dlg.showModal();
@@ -837,30 +883,26 @@ window.deleteBooking=async function(id){
 };
 
 document.getElementById('form').addEventListener('submit',async e=>{
-  e.preventDefault();
-
-  const data={};
-  ['full_name','department','contact','booking_date','start_time','end_time','sample_info','comment']
-    .forEach(id=>data[id]=document.getElementById(id).value);
-
-  const r=await fetch('/api/bookings',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data)
+ e.preventDefault();
+ const button=document.querySelector('#form button[type="submit"]');
+ if(button.disabled)return;
+ button.disabled=true;
+ const err=document.getElementById('err');err.style.display='none';
+ const id=editingId;
+ const data={};
+ ['full_name','department','contact','booking_date','start_time','end_time','sample_info','comment'].forEach(field=>data[field]=document.getElementById(field).value);
+ try{
+  const result=await fetchJson(id?`/api/bookings/${id}`:'/api/bookings',{
+   method:id?'PUT':'POST',headers:{'Content-Type':'application/json',...(id?editorHeaders(id):{})},body:JSON.stringify(data)
   });
-
-  if(!r.ok){
-    const info=await r.json();
-    const err=document.getElementById('err');
-    err.textContent=info.detail||'Не удалось создать запись';
-    err.style.display='block';
-    return;
-  }
-
+  if(result.edit_token)saveEditKey(result.id,result.edit_token);
   dlg.close();
-  document.getElementById('form').reset();
+  const [y,m]=data.booking_date.split('-').map(Number);current=new Date(y,m-1,1);applyMonthTheme();
   await loadMonthBookings();
-  showSuccessToast();
+  if(document.body.classList.contains('records-view'))await renderAllBookings();
+  if(editKeys[result.id])showEditLink(result.id);else showSuccessToast();
+ }catch(error){err.textContent=error.message;err.style.display='block';}
+ finally{button.disabled=false;}
 });
 
 document.getElementById('prev').addEventListener('click',()=>changeMonth(-1));
@@ -885,6 +927,13 @@ const initialMobileAdmin=document.getElementById('mobileAdmin');
 if(initialMobileAdmin && adminPassword) initialMobileAdmin.classList.add('active');
 applyMonthTheme();
 loadMonthBookings();
+const incomingEdit=new URLSearchParams(location.hash.slice(1));
+if(/^\d+$/.test(incomingEdit.get('edit')||'') && incomingEdit.get('key')){
+ const id=Number(incomingEdit.get('edit'));
+ saveEditKey(id,incomingEdit.get('key'));
+ history.replaceState(null,'',location.pathname+location.search);
+ editBooking(id);
+}
 
 </script>
 
