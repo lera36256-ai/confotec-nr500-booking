@@ -1,4 +1,6 @@
 import os
+import secrets
+import hashlib
 from datetime import date, datetime, time
 from typing import Optional
 
@@ -35,6 +37,11 @@ class Booking(Base):
     sample_info: Mapped[str] = mapped_column(Text, default="")
     comment: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[str] = mapped_column(String(40), default=lambda: datetime.now().isoformat(timespec="seconds"))
+
+class BookingAccess(Base):
+    __tablename__ = "booking_access"
+    booking_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    token_hash: Mapped[str] = mapped_column(String(64))
 
 Base.metadata.create_all(engine)
 app = FastAPI(title="Confotec NR500 Booking")
@@ -127,9 +134,12 @@ def create_booking(payload: BookingIn):
             comment=payload.comment.strip(),
         )
         db.add(booking)
+        db.flush()
+        token = secrets.token_urlsafe(32)
+        db.add(BookingAccess(booking_id=booking.id, token_hash=hashlib.sha256(token.encode()).hexdigest()))
         db.commit()
         db.refresh(booking)
-        return serialize(booking)
+        return {**serialize(booking), "edit_token": token}
 
 @app.delete("/api/bookings/{booking_id}")
 def delete_booking(booking_id: int, x_admin_password: Optional[str] = Header(default=None)):
@@ -141,3 +151,50 @@ def delete_booking(booking_id: int, x_admin_password: Optional[str] = Header(def
         db.delete(booking)
         db.commit()
     return {"ok": True}
+
+
+def verify_editor(db, booking_id, token, admin):
+    if admin and secrets.compare_digest(admin, ADMIN_PASSWORD):
+        return
+    access = db.get(BookingAccess, booking_id)
+    if not token or not access or not secrets.compare_digest(
+        access.token_hash, hashlib.sha256(token.encode()).hexdigest()
+    ):
+        raise HTTPException(status_code=403, detail="Для изменения нужна личная ссылка или доступ администратора")
+
+@app.get("/api/bookings/{booking_id}/edit")
+def get_edit_booking(booking_id: int, x_edit_token: Optional[str] = Header(default=None),
+                     x_admin_password: Optional[str] = Header(default=None)):
+    with SessionLocal() as db:
+        verify_editor(db, booking_id, x_edit_token, x_admin_password)
+        booking = db.get(Booking, booking_id)
+        if not booking:
+            raise HTTPException(status_code=404, detail="Запись не найдена")
+        return serialize(booking)
+
+@app.put("/api/bookings/{booking_id}")
+def update_booking(booking_id: int, payload: BookingIn,
+                   x_edit_token: Optional[str] = Header(default=None),
+                   x_admin_password: Optional[str] = Header(default=None)):
+    with SessionLocal() as db:
+        verify_editor(db, booking_id, x_edit_token, x_admin_password)
+        booking = db.get(Booking, booking_id)
+        if not booking:
+            raise HTTPException(status_code=404, detail="Запись не найдена")
+        start, end = parse_time(payload.start_time), parse_time(payload.end_time)
+        if end <= start:
+            raise HTTPException(status_code=400, detail="Время окончания должно быть позже времени начала")
+        if len(payload.full_name.strip()) < 2:
+            raise HTTPException(status_code=400, detail="Укажите ФИО")
+        conflict = db.scalar(select(Booking).where(
+            Booking.id != booking_id, Booking.booking_date == payload.booking_date,
+            Booking.start_time < end, Booking.end_time > start))
+        if conflict:
+            raise HTTPException(status_code=409, detail="Это время уже занято")
+        for field in ("full_name", "department", "contact", "sample_info", "comment"):
+            setattr(booking, field, getattr(payload, field).strip())
+        booking.booking_date = payload.booking_date
+        booking.start_time, booking.end_time = start, end
+        db.commit()
+        db.refresh(booking)
+        return serialize(booking)
