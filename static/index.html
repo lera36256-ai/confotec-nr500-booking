@@ -495,12 +495,6 @@ body{overflow-x:visible}
   </form>
 </dialog>
 
-<dialog id="accessDialog">
- <div class="modal-head"><strong>Запись сохранена 🐾</strong><button class="close" type="button" onclick="document.getElementById('accessDialog').close()" aria-label="Закрыть">×</button></div>
- <div class="modal-body"><p>Сохраните личную ссылку: по ней можно изменить эту запись с любого устройства. Не передавайте её другим.</p>
- <div class="field"><label for="editLink">Ссылка для редактирования</label><input id="editLink" readonly onclick="this.select()"></div>
- <button type="button" class="primary" id="copyEditLink">Скопировать ссылку</button><p id="copyStatus" role="status"></p></div>
-</dialog>
 <dialog id="dayDialog" aria-labelledby="dayTitle">
  <div class="modal-head"><strong id="dayTitle"></strong><button type="button" class="close" id="dayClose" aria-label="Закрыть">×</button></div>
  <div class="modal-body"><div id="dayEntries"></div><div class="modal-actions"><button type="button" class="primary" id="dayNew">Новая запись</button></div></div>
@@ -518,26 +512,14 @@ let editKeys={};
 try{editKeys=JSON.parse(localStorage.getItem('bookingEditKeys')||'{}')||{};}catch(_){}
 function saveEditKey(id,token){
  editKeys[id]=token;
- try{localStorage.setItem('bookingEditKeys',JSON.stringify(editKeys));}catch(_){}
+ try{localStorage.setItem('bookingEditKeys',JSON.stringify(editKeys));}catch(_){alert('Браузер не разрешает запомнить запись. После закрытия страницы для изменений потребуется администратор.');}
 }
 function editorHeaders(id){
  return {'X-Edit-Token':editKeys[id]||'', 'X-Admin-Password':adminPassword};
 }
 function editButton(b){
- return editKeys[b.id]||adminPassword?`<button type="button" class="secondary" style="min-height:44px" onclick="editBooking(${b.id})">Редактировать</button>`:'';
+ return editKeys[b.id]||adminPassword?`<button type="button" class="secondary" style="min-height:44px" onclick="editBooking(${b.id})">Редактировать</button> <button type="button" class="danger" style="min-height:44px" onclick="deleteBooking(${b.id})">Удалить</button>`:'';
 }
-function showEditLink(id){
- const link=new URL(location.pathname,location.origin);
- link.hash=new URLSearchParams({edit:String(id),key:editKeys[id]}).toString();
- document.getElementById('editLink').value=link.href;
- document.getElementById('copyStatus').textContent='';
- document.getElementById('accessDialog').showModal();
-}
-document.getElementById('copyEditLink').addEventListener('click',async()=>{
- const input=document.getElementById('editLink');
- try{await navigator.clipboard.writeText(input.value);document.getElementById('copyStatus').textContent='Ссылка скопирована';}
- catch(_){input.focus();input.select();document.getElementById('copyStatus').textContent='Скопируйте выделенную ссылку вручную';}
-});
 window.editBooking=async function(id){
  try{
   const b=await fetchJson(`/api/bookings/${id}/edit`,{headers:editorHeaders(id)});
@@ -776,34 +758,40 @@ function renderCalendar(){
   }
 }
 
-async function renderAllBookings(){
+async function renderAllBookings(scrollToToday=false){
   const root=document.getElementById('list');
   root.innerHTML='<div style="color:var(--muted)">Загружаю записи…</div>';
 
   try{
     const all=await fetchJson('/api/bookings');
-    if(!all.length){
-      root.innerHTML='<div style="color:var(--muted)">Записей пока нет.</div>';
-      return;
-    }
+    all.sort((a,b)=>a.booking_date.localeCompare(b.booking_date)||a.start_time.localeCompare(b.start_time));
+    const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    const hasToday=all.some(b=>b.booking_date===today);
+    const marker=`<tr id="todayRecords"><td colspan="6" style="background:var(--soft);padding:16px;font-weight:700">${hasToday?'Сегодня · '+today.split('-').reverse().join('.'):'Сегодня записей нет'}</td></tr>`;
+    let markerPlaced=false;
 
     root.innerHTML=`<table>
       <thead><tr>
         <th>Дата</th><th>Время</th><th>ФИО</th><th>Подразделение</th><th>Образцы</th><th>Комментарий</th>
-        ${adminPassword?'<th></th>':''}
+
       </tr></thead>
       <tbody>
-        ${all.map(b=>`<tr>
+        ${all.map(b=>{
+          const before=!markerPlaced && b.booking_date>=today?marker:'';
+          if(before)markerPlaced=true;
+          return `${before}<tr>
           <td>${esc(b.booking_date.split('-').reverse().join('.'))}</td>
           <td>${esc(b.start_time)}–${esc(b.end_time)}</td>
           <td>${esc(b.full_name)}${bookingCat(b)}${editButton(b)}</td>
           <td>${esc(b.department)||'—'}</td>
           <td>${esc(b.sample_info)||'—'}</td>
           <td>${esc(b.comment)||'—'}</td>
-          ${adminPassword?`<td><button class="danger" onclick="deleteBooking(${b.id})">Удалить</button></td>`:''}
-        </tr>`).join('')}
+
+        </tr>`}).join('')}
+        ${markerPlaced?'':marker}
       </tbody>
     </table>`;
+    if(scrollToToday && document.body.classList.contains('records-view'))document.getElementById('todayRecords').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(err){
     root.innerHTML=`<div style="color:#b42318">${esc(err.message)}</div>`;
   }
@@ -820,8 +808,7 @@ window.showRecordsView=async function showRecordsView(){
   document.body.classList.add('records-view');
   document.getElementById('allBookingsSection').style.display='block';
   setActiveSection('records');
-  await renderAllBookings();
-  document.getElementById('allBookingsSection').scrollIntoView({behavior:'smooth',block:'start'});
+  await renderAllBookings(true);
 };
 
 window.openDialog=function openDialog(d){
@@ -855,32 +842,22 @@ window.toggleAdmin=async function toggleAdmin(){
   }
 };
 
+const deletingBookings=new Set();
 window.deleteBooking=async function(id){
-  if(!adminPassword)return;
-  if(!confirm('Удалить эту запись?'))return;
-
-  const r=await fetch(`/api/bookings/${id}`,{
-    method:'DELETE',
-    headers:{'X-Admin-Password':adminPassword}
-  });
-
-  if(r.status===401){
-    alert('Неверный пароль администратора.');
-    adminPassword='';
-    sessionStorage.removeItem('adminPassword');
-    setAdminUi();
-    await renderAllBookings();
-    return;
-  }
-
-  if(!r.ok){
-    alert('Не удалось удалить запись.');
-    return;
-  }
-
+ if(deletingBookings.has(id)||(!editKeys[id]&&!adminPassword))return;
+ if(!confirm('Удалить эту запись? Отменить удаление нельзя.'))return;
+ deletingBookings.add(id);
+ try{
+  await fetchJson(`/api/bookings/${id}`,{method:'DELETE',headers:editorHeaders(id)});
+  delete editKeys[id];
+  try{localStorage.setItem('bookingEditKeys',JSON.stringify(editKeys));}catch(_){}
   await loadMonthBookings();
-  await renderAllBookings();
+  if(dayDialog.open)openDayAfterDelete();
+  if(document.body.classList.contains('records-view'))await renderAllBookings(true);
+ }catch(err){alert(err.message);}
+ finally{deletingBookings.delete(id);}
 };
+function openDayAfterDelete(){dayDialog.close();openDay(selectedDay);}
 
 document.getElementById('form').addEventListener('submit',async e=>{
  e.preventDefault();
@@ -900,7 +877,8 @@ document.getElementById('form').addEventListener('submit',async e=>{
   const [y,m]=data.booking_date.split('-').map(Number);current=new Date(y,m-1,1);applyMonthTheme();
   await loadMonthBookings();
   if(document.body.classList.contains('records-view'))await renderAllBookings();
-  if(editKeys[result.id])showEditLink(result.id);else showSuccessToast();
+  showSuccessToast();
+  document.getElementById('successToast').textContent=id?'Изменения сохранены 🐾':'Запись сохранена 🐾 Изменить или удалить её можно в этом браузере.';
  }catch(error){err.textContent=error.message;err.style.display='block';}
  finally{button.disabled=false;}
 });
